@@ -65,17 +65,17 @@ interface ApiResponse {
   data: DealData;
 }
 
-// Define the correct type for Next.js App Router page params
-type Props = {
-  params: { id: string }
-  searchParams: { [key: string]: string | string[] | undefined }
-}
+// For client components in Next.js App Router, we need to use a different approach
+// Instead of defining a Props type, we'll use the params directly
 
-// Make this a default export function with the correct type structure for Next.js App Router
-export default function DealDetailPage({ params }: Props) {
+export default function DealDetailPage({
+  params
+}: {
+  params: { id: string }
+}) {
   const router = useRouter();
   const [dealData, setDealData] = useState<DealData | null>(null);
-  
+
   // Fetch deal data using custom useQuery hook
   const { data, isLoading, error, refetch } = useGenericQuery<ApiResponse>(
     ['dealDetail', params.id],
@@ -111,9 +111,9 @@ export default function DealDetailPage({ params }: Props) {
   };
 
   // Calculate slots left
-  const slotsLeft = dealData?.parentDealId?.slotAlloted 
+  const slotsLeft = dealData?.parentDealId?.slotAlloted
     ? Number(dealData?.parentDealId?.slotAlloted) - Number(dealData?.parentDealId?.slotCompletedCount || 0)
-    : dealData?.slotAlloted 
+    : dealData?.slotAlloted
       ? Number(dealData?.slotAlloted) - Number(dealData?.slotCompletedCount || 0)
       : 0;
 
@@ -122,7 +122,7 @@ export default function DealDetailPage({ params }: Props) {
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <button 
+          <button
             onClick={handleBack}
             className="flex items-center text-gray-700 hover:text-gray-900"
           >
@@ -132,7 +132,7 @@ export default function DealDetailPage({ params }: Props) {
             Back
           </button>
           <h1 className="text-xl font-bold text-gray-800">Deal Detail</h1>
-          <button 
+          <button
             onClick={() => shareProductLink(dealData?._id || '')}
             className="text-gray-700 hover:text-gray-900"
           >
@@ -155,10 +155,10 @@ export default function DealDetailPage({ params }: Props) {
               <div className="relative h-80 w-full">
                 <Image
                   src={
-                    dealData?.parentDealId?.imageUrl || 
-                    dealData?.parentDealId?.brand?.image || 
-                    dealData?.imageUrl || 
-                    dealData?.brand?.image || 
+                    dealData?.parentDealId?.imageUrl ||
+                    dealData?.parentDealId?.brand?.image ||
+                    dealData?.imageUrl ||
+                    dealData?.brand?.image ||
                     '/images/placeholder.png'
                   }
                   alt={dealData?.parentDealId?.productName || dealData?.productName || 'Product'}
@@ -166,7 +166,7 @@ export default function DealDetailPage({ params }: Props) {
                   className="object-contain"
                 />
               </div>
-              
+
               {slotsLeft > 0 && (
                 <div className="absolute top-2 right-2 bg-black bg-opacity-70 rounded-lg px-3 py-1">
                   <p className="text-white text-sm font-medium animate-pulse">
@@ -294,8 +294,8 @@ export default function DealDetailPage({ params }: Props) {
               >
                 Get This Deal
               </button>
-              
-              <Link 
+
+              <Link
                 href={`/order-form/${dealData?._id}`}
                 className="block w-full bg-gradient-to-r from-green-600 to-teal-600 text-white py-3 rounded-lg font-medium text-center
                   hover:from-green-700 hover:to-teal-700 transition-colors duration-200"
