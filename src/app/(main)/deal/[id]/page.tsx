@@ -66,9 +66,10 @@ interface ApiResponse {
 }
 interface DealDetailProps {
   params: { id: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-export default function DealDetail({ params }: DealDetailProps) {
+export default function DealDetail({ params, searchParams }: DealDetailProps) {
   const router = useRouter();
   const [dealData, setDealData] = useState<DealData | null>(null);
   
