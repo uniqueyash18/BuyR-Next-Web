@@ -94,12 +94,6 @@ export default function HomePage() {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-700 bg-clip-text text-transparent">Deals You May Like</h2>
-                <Link href="/deals/all/all" className="text-green-600 hover:text-green-800 transition-colors font-medium flex items-center">
-                  View All Deals
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
               </div>
 
               <div className="relative">
