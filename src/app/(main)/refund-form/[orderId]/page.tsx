@@ -45,13 +45,13 @@ interface ApiResponse {
   data: OrderData;
 }
 
-export default function RefundFormPage({ params }: { params: { orderId: string } }) {
+export default function RefundFormPage({ params }: any) {
   const router = useRouter();
   const [resetKey, setResetKey] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Get orderId directly from params
-  const { orderId } = params;
+  const unwrappedParams = React.use(params) as { orderId: string };
+  const { orderId } = unwrappedParams;
 
   // Fetch order data
   const { data: orderData, isLoading: isOrderLoading } = useGenericQuery<ApiResponse>(
