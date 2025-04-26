@@ -66,15 +66,13 @@ interface ApiResponse {
 }
 
 // Define the correct type for Next.js App Router page params
-interface PageProps {
-  params: {
-    id: string;
-  };
-  searchParams?: { [key: string]: string | string[] | undefined };
+type Props = {
+  params: { id: string }
+  searchParams: { [key: string]: string | string[] | undefined }
 }
 
 // Make this a default export function with the correct type structure for Next.js App Router
-export default function DealDetailPage({ params }: PageProps) {
+export default function DealDetailPage({ params }: Props) {
   const router = useRouter();
   const [dealData, setDealData] = useState<DealData | null>(null);
   
