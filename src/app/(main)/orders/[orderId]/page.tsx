@@ -8,6 +8,7 @@ import GradientButton from '@/components/GradientButton';
 import { useGenericQuery } from '@/hooks/useQuery';
 import { showError } from '@/utils/helperFunctions';
 import dayjs from 'dayjs';
+import React from 'react';
 
 interface DealData {
   _id: string;
@@ -70,31 +71,51 @@ interface DealData {
   reviewerName?: string;
 }
 
+interface OrderData {
+  dealId: DealData;
+  orderIdOfPlatForm?: string;
+  orderFormStatus: string;
+  orderDate?: string;
+  paymentStatus?: string;
+  refundDays?: number;
+  reviewerName?: string;
+  rejectReason?: string;
+  exchangeDealProducts?: Array<string>;
+  orderScreenShot?: string;
+  deliveredScreenShot?: string;
+  reviewScreenShot?: string;
+  sellerFeedback?: string;
+  finalCashBackForUser?: string;
+}
+
 interface ApiResponse {
   success: boolean;
   message: string;
-  data: DealData;
+  data: OrderData;
 }
 
-export default function OrderDetailPage({ params }: { params:any}) {
+export default function OrderDetailPage({ params }: any) {
+  // Unwrap the params Promise using React.use()
+  const unwrappedParams = React.use(params) as { orderId: string };
+  const { orderId } = unwrappedParams;
+
   const router = useRouter();
-  const searchParams = useSearchParams();
-  console.log(searchParams,'searchParams')
-  const dealId = searchParams.get('dealId');
   const [dealData, setDealData] = useState<DealData | null>(null);
+  const [orderData, setOrderData] = useState<OrderData | null>(null);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<{ title: string; img: string } | null>(null);
   const [isImageLoading, setIsImageLoading] = useState(false);
-  
+
   // Fetch deal data using custom useQuery hook
   const { data, isLoading, error, refetch } = useGenericQuery<ApiResponse>(
-    ['dealDetail', dealId || ''],
-    `/user/deal/detail/${dealId || ''}`
+    ['orderDetail', orderId || ''],
+    `/user/order/getOrderById/${orderId || ''}`
   );
 
   useEffect(() => {
     if (data?.data) {
-      setDealData(data.data);
+      setDealData(data?.data?.dealId);
+      setOrderData(data?.data);
     } else if (error) {
       showError(error?.message || 'Failed to load deal details');
     }
@@ -134,9 +155,22 @@ export default function OrderDetailPage({ params }: { params:any}) {
     return status === 'order_rejected';
   };
 
-  const checkOrderStatus = (status?: string) => {
-    if (!status) return '';
-    return status.replace(/_/g, ' ');
+  // Function to check order status
+  const checkOrderStatus = (status: string) => {
+    switch (status) {
+      case 'reviewFormSubmitted':
+        return 'Review Submitted';
+      case 'accepted':
+        return 'Order Accepted';
+      case 'rejected':
+        return 'Order Rejected';
+      case 'pending':
+        return 'Order Pending';
+      case 'reviewFormRejected':
+        return 'Review Rejected';
+      case 'reviewFormAccepted':
+        return 'Review Accepted';
+    }
   };
 
   const checkIsAnyFormRejected = (status?: string) => {
@@ -149,7 +183,20 @@ export default function OrderDetailPage({ params }: { params:any}) {
       </div>
     );
   }
+  // Function to check if order is pending
+  const checkIsOrderPending = (status: string) => {
+    return status === "pending" || status === "reviewFormSubmitted";
+  };
 
+  const getStatusColor = (status: string) => {
+    if (checkIsAnyFormRejected(status)) {
+      return "text-red-600";
+    } else if (checkIsOrderPending(status) || status === "reviewFormSubmitted") {
+      return "text-yellow-600";
+    } else {
+      return "text-green-600";
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
       <FadeInSection>
@@ -157,7 +204,7 @@ export default function OrderDetailPage({ params }: { params:any}) {
           {/* Header with Status Badge */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
-              <button 
+              <button
                 onClick={() => router.back()}
                 className="p-2 rounded-full hover:bg-gray-100 transition-colors"
               >
@@ -167,11 +214,9 @@ export default function OrderDetailPage({ params }: { params:any}) {
               </button>
               <h1 className="text-2xl font-bold text-gray-800 ml-4">My Order Details</h1>
             </div>
-            {dealData?.paymentStatus && (
-              <div className={`px-4 py-2 rounded-full ${
-                dealData.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-              }`}>
-                <span className="font-medium capitalize">{dealData.paymentStatus}</span>
+            {orderData?.paymentStatus && (
+              <div className={`px-4 py-2 rounded-full ${getStatusColor(orderData?.orderFormStatus)}`}>
+                <span className="font-medium capitalize">{checkOrderStatus(orderData.orderFormStatus)}</span>
               </div>
             )}
           </div>
@@ -179,50 +224,51 @@ export default function OrderDetailPage({ params }: { params:any}) {
           {/* Product Card */}
           <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
             <div className="relative h-64 w-full bg-gray-50">
-              <Image
-                src={dealData?.parentDealId?.imageUrl || dealData?.imageUrl ||''}
-                alt={dealData?.parentDealId?.productName || dealData?.productName || 'Product'}
+              {(orderData?.dealId?.parentDealId?.imageUrl || orderData?.dealId?.imageUrl) &&<Image
+                unoptimized
+                src={orderData?.dealId?.parentDealId?.imageUrl || orderData?.dealId?.imageUrl || ''}
+                alt={orderData?.dealId?.parentDealId?.productName || orderData?.dealId?.productName || 'Product'}
                 fill
                 className="object-contain p-4"
-              />
+              />}
             </div>
             <div className="p-6">
               <h2 className="text-xl font-bold text-gray-800 mb-2">
-                {dealData?.parentDealId?.productName || dealData?.productName}
+                {orderData?.dealId?.parentDealId?.productName || orderData?.dealId?.productName}
               </h2>
-              
+
               <div className="flex flex-wrap gap-2 mb-4">
-                {(dealData?.parentDealId?.brand?.name || dealData?.brand?.name) && (
+                {(orderData?.dealId?.parentDealId?.brand?.name || orderData?.dealId?.brand?.name) && (
                   <div className="bg-blue-100 px-3 py-1 rounded-full">
                     <span className="text-sm font-medium text-blue-800">
-                      {dealData?.parentDealId?.brand?.name || dealData?.brand?.name}
+                      {orderData?.dealId?.parentDealId?.brand?.name || orderData?.dealId?.brand?.name}
                     </span>
                   </div>
                 )}
-                {(dealData?.parentDealId?.dealCategory?.name || dealData?.dealCategory?.name) && (
+                {(orderData?.dealId?.parentDealId?.dealCategory?.name || orderData?.dealId?.dealCategory?.name) && (
                   <div className="bg-purple-100 px-3 py-1 rounded-full">
                     <span className="text-sm font-medium text-purple-800">
-                      {dealData?.parentDealId?.dealCategory?.name || dealData?.dealCategory?.name}
+                      {orderData?.dealId?.parentDealId?.dealCategory?.name || orderData?.dealId?.dealCategory?.name}
                     </span>
                   </div>
                 )}
-                {(dealData?.parentDealId?.platForm?.name || dealData?.platForm?.name) && (
+                {(orderData?.dealId?.parentDealId?.platForm?.name || orderData?.dealId?.platForm?.name) && (
                   <div className="bg-green-100 px-3 py-1 rounded-full">
                     <span className="text-sm font-medium text-green-800">
-                      {dealData?.parentDealId?.platForm?.name || dealData?.platForm?.name}
+                      {orderData?.dealId?.parentDealId?.platForm?.name || orderData?.dealId?.platForm?.name}
                     </span>
                   </div>
                 )}
               </div>
-              
+
               <div className="flex justify-between items-center">
                 <div>
                   <p className="text-sm text-gray-500">Return Amount</p>
-                  <p className="text-xl font-bold text-green-600">₹{Number(dealData?.finalCashBackForUser || 0).toFixed(2)}</p>
+                  <p className="text-xl font-bold text-green-600">₹{Number(orderData?.dealId?.finalCashBackForUser || 0).toFixed(2)}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-500">Order ID</p>
-                  <p className="text-sm font-medium text-gray-700">{dealData?.orderIdOfPlatForm || ''}</p>
+                  <p className="text-sm font-medium text-gray-700">{orderData?.orderIdOfPlatForm || ''}</p>
                 </div>
               </div>
             </div>
@@ -236,51 +282,51 @@ export default function OrderDetailPage({ params }: { params:any}) {
               </svg>
               Order Information
             </h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Order Status */}
-              {dealData?.orderFormStatus && (
+              {orderData?.orderFormStatus && (
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <p className="text-sm text-gray-500 mb-1">Order Status</p>
-                  <p className="font-medium capitalize">{checkOrderStatus(dealData.orderFormStatus)}</p>
+                  <p className="font-medium capitalize text-blue-500">{checkOrderStatus(orderData.orderFormStatus)}</p>
                 </div>
               )}
-              
+
               {/* Order Date */}
-              {dealData?.orderDate && (
+              {orderData?.orderDate && (
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <p className="text-sm text-gray-500 mb-1">Order Date</p>
-                  <p className="font-medium">{dayjs(dealData.orderDate).format('DD MMMM YYYY')}</p>
+                  <p className="font-medium text-gray-500">{dayjs(orderData.orderDate).format('DD MMMM YYYY')}</p>
                 </div>
               )}
-              
+
               {/* Refund Period or Payment Status */}
-              {dealData?.paymentStatus !== 'paid' ? (
+              {orderData?.paymentStatus !== 'paid' ? (
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <p className="text-sm text-gray-500 mb-1">Refund Period</p>
-                  <p className="font-medium">{dealData?.refundDays} days</p>
+                  <p className="font-medium text-gray-500">{orderData?.dealId?.refundDays} days</p>
                 </div>
               ) : (
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <p className="text-sm text-gray-500 mb-1">Payment Status</p>
-                  <p className="font-medium capitalize">{dealData?.paymentStatus}</p>
+                  <p className="font-medium capitalize text-gray-500">{orderData?.paymentStatus}</p>
                 </div>
               )}
-              
+
               {/* Profile Name */}
-              {dealData?.reviewerName && (
+              {orderData?.reviewerName && (
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <p className="text-sm text-gray-500 mb-1">Profile Name</p>
-                  <p className="font-medium">{dealData.reviewerName}</p>
+                  <p className="font-medium text-gray-500">{orderData.reviewerName}</p>
                 </div>
               )}
             </div>
-            
+
             {/* Order Rejection Reason */}
-            {dealData?.rejectReason && checkIsAnyFormRejected(dealData.orderFormStatus) && (
+            {orderData?.rejectReason && checkIsAnyFormRejected(orderData.orderFormStatus) && (
               <div className="mt-4 p-4 bg-red-50 rounded-lg border border-red-100">
                 <p className="text-sm font-medium text-red-800 mb-1">Rejection Reason</p>
-                <p className="text-red-600">{dealData.rejectReason}</p>
+                <p className="text-red-600">{orderData.rejectReason}</p>
               </div>
             )}
           </div>
@@ -293,37 +339,37 @@ export default function OrderDetailPage({ params }: { params:any}) {
               </svg>
               Pricing Details
             </h3>
-            
+
             <div className="space-y-3">
               {/* Price */}
-              {(dealData?.parentDealId?.actualPrice || dealData?.actualPrice) && (
+              {(orderData?.dealId?.parentDealId?.actualPrice || orderData?.dealId?.actualPrice) && (
                 <div className="flex justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Price (MRP of Product)</span>
-                  <span className="font-medium text-red-500">₹{Number(dealData?.parentDealId?.actualPrice || dealData?.actualPrice).toFixed(0)}</span>
+                  <span className="font-medium text-red-500">₹{Number(orderData?.dealId?.parentDealId?.actualPrice || orderData?.dealId?.actualPrice).toFixed(0)}</span>
                 </div>
               )}
 
               {/* Commission Amount */}
-              {(Number(dealData?.finalCashBackForUser) > Number(dealData?.parentDealId?.actualPrice || dealData?.actualPrice)) && (
+              {(Number(orderData?.dealId?.finalCashBackForUser) > Number(dealData?.parentDealId?.actualPrice || dealData?.actualPrice)) && (
                 <div className="flex justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Commission Amount</span>
-                  <span className="font-medium text-green-500">₹{Number(Number(dealData?.finalCashBackForUser) - Number(dealData?.parentDealId?.actualPrice || dealData?.actualPrice)).toFixed(0)}</span>
+                  <span className="font-medium text-green-500">₹{Number(Number(orderData?.dealId?.finalCashBackForUser) - Number(dealData?.parentDealId?.actualPrice || dealData?.actualPrice)).toFixed(0)}</span>
                 </div>
               )}
 
               {/* Return Amount */}
-              {dealData?.finalCashBackForUser && (
+              {orderData?.dealId?.finalCashBackForUser && (
                 <div className="flex justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Return Amount</span>
-                  <span className="font-medium text-green-500">₹{Number(dealData?.finalCashBackForUser).toFixed(0)}</span>
+                  <span className="font-medium text-green-500">₹{Number(orderData?.dealId?.finalCashBackForUser).toFixed(0)}</span>
                 </div>
               )}
-              
+
               {/* Exchange Product */}
-              {(dealData?.parentDealId?.exchangeDealProducts || dealData?.exchangeDealProducts) && (
+              {orderData?.exchangeDealProducts && orderData?.exchangeDealProducts?.length > 0 && (
                 <div className="flex justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Exchange Product</span>
-                  <span className="font-medium">{dealData?.parentDealId?.exchangeDealProducts || dealData?.exchangeDealProducts}</span>
+                  <span className="font-medium">{orderData?.exchangeDealProducts?.map((product: string) => product).join(', ')}</span>
                 </div>
               )}
             </div>
@@ -338,9 +384,9 @@ export default function OrderDetailPage({ params }: { params:any}) {
                 </svg>
                 Review Link
               </h3>
-              <a 
-                href={dealData.reviewLink} 
-                target="_blank" 
+              <a
+                href={dealData.reviewLink}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center text-blue-500 hover:text-blue-700 transition-colors"
               >
@@ -368,7 +414,7 @@ export default function OrderDetailPage({ params }: { params:any}) {
           )}
 
           {/* Screenshots Section */}
-          {(dealData?.orderScreenShot || dealData?.deliveredScreenShot || dealData?.reviewScreenShot || dealData?.sellerFeedback) && (
+          {(orderData?.orderScreenShot || orderData?.deliveredScreenShot || orderData?.reviewScreenShot || orderData?.sellerFeedback) && (
             <div className="bg-white rounded-xl shadow-md p-6 mb-6">
               <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -376,15 +422,15 @@ export default function OrderDetailPage({ params }: { params:any}) {
                 </svg>
                 Screenshots
               </h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Order Screenshot */}
-                {dealData?.orderScreenShot && (
+                {orderData?.orderScreenShot && (
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <div className="flex justify-between items-center mb-2">
                       <h4 className="font-medium text-gray-800">Order Screenshot</h4>
-                      <button 
-                        onClick={() => handleViewImage('Order Screenshot', dealData.orderScreenShot!)}
+                      <button
+                        onClick={() => handleViewImage('Order Screenshot', orderData.orderScreenShot!)}
                         className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-sm"
                       >
                         View
@@ -392,7 +438,7 @@ export default function OrderDetailPage({ params }: { params:any}) {
                     </div>
                     <div className="relative h-32 w-full bg-white rounded overflow-hidden">
                       <Image
-                        src={dealData.orderScreenShot}
+                        src={orderData?.orderScreenShot || ''}
                         alt="Order Screenshot"
                         fill
                         className="object-cover"
@@ -402,12 +448,12 @@ export default function OrderDetailPage({ params }: { params:any}) {
                 )}
 
                 {/* Delivered Screenshot */}
-                {dealData?.deliveredScreenShot && (
+                {orderData?.deliveredScreenShot && (
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <div className="flex justify-between items-center mb-2">
                       <h4 className="font-medium text-gray-800">Delivered Screenshot</h4>
-                      <button 
-                        onClick={() => handleViewImage('Delivered Screenshot', dealData.deliveredScreenShot!)}
+                      <button
+                        onClick={() => handleViewImage('Delivered Screenshot', orderData.deliveredScreenShot!)}
                         className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-sm"
                       >
                         View
@@ -415,7 +461,7 @@ export default function OrderDetailPage({ params }: { params:any}) {
                     </div>
                     <div className="relative h-32 w-full bg-white rounded overflow-hidden">
                       <Image
-                        src={dealData.deliveredScreenShot}
+                        src={orderData?.deliveredScreenShot || ''}
                         alt="Delivered Screenshot"
                         fill
                         className="object-cover"
@@ -429,8 +475,8 @@ export default function OrderDetailPage({ params }: { params:any}) {
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <div className="flex justify-between items-center mb-2">
                       <h4 className="font-medium text-gray-800">Review Screenshot</h4>
-                      <button 
-                        onClick={() => handleViewImage('Review Screenshot', dealData.reviewScreenShot!)}
+                      <button
+                        onClick={() => handleViewImage('Review Screenshot', orderData.reviewScreenShot!)}
                         className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-sm"
                       >
                         View
@@ -438,7 +484,7 @@ export default function OrderDetailPage({ params }: { params:any}) {
                     </div>
                     <div className="relative h-32 w-full bg-white rounded overflow-hidden">
                       <Image
-                        src={dealData.reviewScreenShot}
+                        src={orderData?.reviewScreenShot || ''}
                         alt="Review Screenshot"
                         fill
                         className="object-cover"
@@ -448,12 +494,12 @@ export default function OrderDetailPage({ params }: { params:any}) {
                 )}
 
                 {/* Seller Feedback Screenshot */}
-                {dealData?.sellerFeedback && (
+                {orderData?.sellerFeedback && (
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <div className="flex justify-between items-center mb-2">
                       <h4 className="font-medium text-gray-800">Seller Feedback Screenshot</h4>
-                      <button 
-                        onClick={() => handleViewImage('Seller Feedback Screenshot', dealData.sellerFeedback!)}
+                      <button
+                        onClick={() => handleViewImage('Seller Feedback Screenshot', orderData.sellerFeedback!)}
                         className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-sm"
                       >
                         View
@@ -461,7 +507,7 @@ export default function OrderDetailPage({ params }: { params:any}) {
                     </div>
                     <div className="relative h-32 w-full bg-white rounded overflow-hidden">
                       <Image
-                        src={dealData.sellerFeedback}
+                        src={orderData?.sellerFeedback || ''}
                         alt="Seller Feedback Screenshot"
                         fill
                         className="object-cover"
@@ -475,16 +521,16 @@ export default function OrderDetailPage({ params }: { params:any}) {
 
           {/* Action Buttons */}
           <div className="space-y-4">
-            {(checkIsOrderAccepted(dealData?.orderFormStatus) || checkIsReviewFormRejected(dealData?.orderFormStatus)) && (
+            {(checkIsOrderAccepted(orderData?.orderFormStatus) || checkIsReviewFormRejected(orderData?.orderFormStatus)) && (
               <GradientButton
-                onClick={checkIsReviewFormRejected(dealData?.orderFormStatus) ? handleUpdateReviewForm : handleFillReviewForm}
+                onClick={checkIsReviewFormRejected(orderData?.orderFormStatus) ? handleUpdateReviewForm : handleFillReviewForm}
                 className="w-full"
               >
-                {checkIsReviewFormRejected(dealData?.orderFormStatus) ? 'Update Review Form' : 'Fill Review Form'}
+                {checkIsReviewFormRejected(orderData?.orderFormStatus) ? 'Update Review Form' : 'Fill Review Form'}
               </GradientButton>
             )}
 
-            {checkIsOrderFormRejected(dealData?.orderFormStatus) && (
+            {checkIsOrderFormRejected(orderData?.orderFormStatus) && (
               <GradientButton
                 onClick={handleUpdateOrderForm}
                 className="w-full"
@@ -502,7 +548,7 @@ export default function OrderDetailPage({ params }: { params:any}) {
           <div className="bg-white rounded-xl p-4 max-w-4xl w-full mx-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-gray-800">{selectedImage.title}</h3>
-              <button 
+              <button
                 onClick={handleCloseImageModal}
                 className="p-2 rounded-full hover:bg-gray-100 transition-colors"
               >

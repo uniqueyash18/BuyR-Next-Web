@@ -65,10 +65,10 @@ const FilterModal = ({ isOpen, onClose, title, options, selectedOption, onSelect
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-hidden">
+    <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4 overflow-hidden">
       <div className="bg-white rounded-xl p-4 w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col relative">
         <div className="flex justify-between items-center mb-4 sticky top-0 bg-white z-10">
-          <h3 className="text-lg font-semibold">{title}</h3>
+          <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -87,7 +87,7 @@ const FilterModal = ({ isOpen, onClose, title, options, selectedOption, onSelect
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
-              <span>{option.name}</span>
+              <span className="text-gray-800">{option.name}</span>
               {selectedOption?._id === option._id ? (
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-600" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />

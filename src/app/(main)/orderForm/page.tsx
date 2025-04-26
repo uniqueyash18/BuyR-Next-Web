@@ -95,14 +95,13 @@ export default function OrderFormPage() {
     allBrandDeals: [] as Deal[],
     selectedDeal: [] as Deal[],
     selectedPlatform: {} as any,
-    isLoading: false,
     allCategories: [] as Category[],
     newDeals: [] as Deal[],
     selectedDealCategory: {} as any,
     selectedExchange: "",
   });
 
-  const { brandData, allBrandDeals, selectedDeal, selectedPlatform, allCategories, newDeals, selectedDealCategory, isLoading, selectedExchange } = state;
+  const { brandData, allBrandDeals, selectedDeal, selectedPlatform, allCategories, newDeals, selectedDealCategory, selectedExchange } = state;
 
   const updateState = (data: any) => setState(state => ({ ...state, ...data }));
 
@@ -117,11 +116,9 @@ export default function OrderFormPage() {
     onSuccess: async ({ data }: any) => {
       updateState({
         brandData: data || [],
-        isLoading: false,
       });
     },
     onError: async (error: any) => {
-      updateState({ isLoading: false });
       console.error("Error fetching brands:", error);
     },
   });
@@ -136,7 +133,7 @@ export default function OrderFormPage() {
       });
 
       if (isEmpty(filteredDeals)) {
-        updateState({ allBrandDeals: [], isLoading: false });
+        updateState({ allBrandDeals: [] });
         console.error("No products available");
         return;
       }
@@ -151,12 +148,10 @@ export default function OrderFormPage() {
 
       updateState({
         allBrandDeals: filteredDeals,
-        isLoading: false,
         allCategories: uniqueCategories,
       });
     },
     onError: async (error: any) => {
-      updateState({ isLoading: false });
       console.error("Error fetching deals:", error);
     },
   });
@@ -170,7 +165,6 @@ export default function OrderFormPage() {
         allBrandDeals: [],
         selectedDeal: [],
         selectedPlatform: {},
-        isLoading: false
       });
 
       // Show success message
@@ -183,7 +177,6 @@ export default function OrderFormPage() {
     },
     onError: async (error: any) => {
       console.error("Error creating order:", error);
-      updateState({ isLoading: false });
       alert(error?.response?.data?.message || "Failed to create order");
     },
   });
@@ -274,7 +267,6 @@ export default function OrderFormPage() {
 
   // Handle form submission
   const handleSubmit = (values: { [key: string]: any }) => {
-    updateState({ isLoading: true });
 
     createOrder({
       dealIds: values?.productName.map((item: any) => {
@@ -325,7 +317,7 @@ export default function OrderFormPage() {
         updateState({ newDeals: [], brandOptions: [], allCategories: [], allBrandDeals: [], selectedDealCategory: {} });
         return true;
       } else {
-        updateState({ selectedPlatform: value, isLoading: true });
+        updateState({ selectedPlatform: value });
         getallBrands({ search: '', offset: 0, limit: 2000 });
         setFieldValue('productName', []);
         setFieldValue('brandName', '');
@@ -337,7 +329,7 @@ export default function OrderFormPage() {
     if (field === 'brandName') {
       setFieldValue('productName', []);
       setFieldValue('categoryName', '');
-      updateState({ isLoading: true, newDeals: [], allCategories: [], selectedDealCategory: {} });
+      updateState({ newDeals: [], allCategories: [], selectedDealCategory: {} });
       getDealsByBrand({
         type: 'brand',
         id: value?.id,

@@ -139,16 +139,18 @@ export default function OrdersPage() {
   // Function to check order status
   const checkOrderStatus = (status: string) => {
     switch (status) {
-      case "completed":
-        return "Completed";
-      case "pending":
-        return "Pending";
-      case "shipped":
-        return "Shipped";
-      case "reviewFormSubmitted":
-        return "Under Review";
-      default:
-        return "Processing";
+      case 'reviewFormSubmitted':
+        return 'Review Submitted';
+      case 'accepted':
+        return 'Order Accepted';
+      case 'rejected':
+        return 'Order Rejected';
+      case 'pending':
+        return 'Order Pending';
+      case 'reviewFormRejected':
+        return 'Review Rejected';
+      case 'reviewFormAccepted':
+        return 'Review Accepted';
     }
   };
 
@@ -312,10 +314,10 @@ export default function OrdersPage() {
         {isDateModalOpen && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-md">
-              <h3 className="text-lg font-semibold mb-4">Select Date</h3>
+              <h3 className="text-lg font-semibold mb-4 text-gray-800">Select Date</h3>
               <input
                 type="date"
-                className="w-full p-2 border border-gray-300 rounded-lg mb-4"
+                className="w-full p-2 border border-gray-300 rounded-lg mb-4 text-gray-800 placeholder:text-gray-400"
                 max={dayjs().format('YYYY-MM-DD')}
                 onChange={(e) => {
                   if (e.target.value) {
@@ -325,7 +327,7 @@ export default function OrdersPage() {
               />
               <div className="flex justify-end gap-2">
                 <button
-                  className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+                  className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 text-gray-800"
                   onClick={() => setIsDateModalOpen(false)}
                 >
                   Cancel
@@ -350,7 +352,7 @@ export default function OrdersPage() {
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">Select Options</h3>
+                <h3 className="text-lg font-semibold text-gray-800">Select Options</h3>
                 <button
                   className="text-gray-500 hover:text-gray-700"
                   onClick={() => setIsFilterModalOpen(false)}
@@ -373,7 +375,7 @@ export default function OrdersPage() {
                         }`}
                       onClick={() => setActiveFilterType(type as FilterType)}
                     >
-                      <span className="font-medium capitalize">
+                      <span className="font-medium capitalize text-gray-800">
                         {type === 'brand' ? 'Brand' : type === 'category' ? 'Category' : 'Platform'}
                       </span>
                     </button>
@@ -382,7 +384,7 @@ export default function OrdersPage() {
 
                 {/* Filter Options */}
                 <div className="w-2/3 bg-white p-4 overflow-y-auto">
-                  <h4 className="font-medium mb-3 capitalize">
+                  <h4 className="font-medium mb-3 capitalize text-gray-800">
                     {activeFilterType === 'brand'
                       ? 'Select the Deal Brand'
                       : activeFilterType === 'category'
@@ -402,7 +404,7 @@ export default function OrdersPage() {
                           selectedBrandFilter?._id === item._id ? null : item
                         )}
                       >
-                        <span>{item.name}</span>
+                        <span className="text-gray-800" >{item.name}</span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className={`h-5 w-5 ${selectedBrandFilter?._id === item._id
@@ -428,7 +430,7 @@ export default function OrdersPage() {
                           selectedCategoryFilter?._id === item._id ? null : item
                         )}
                       >
-                        <span>{item.name}</span>
+                        <span className="text-gray-800">{item.name}</span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className={`h-5 w-5 ${selectedCategoryFilter?._id === item._id
@@ -454,7 +456,7 @@ export default function OrdersPage() {
                           selectedPlatformFilter?._id === item._id ? null : item
                         )}
                       >
-                        <span>{item.name}</span>
+                        <span className="text-gray-800">{item.name}</span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className={`h-5 w-5 ${selectedPlatformFilter?._id === item._id

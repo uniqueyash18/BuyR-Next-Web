@@ -65,21 +65,19 @@ interface ApiResponse {
   data: DealData;
 }
 
-// For client components in Next.js App Router, we need to use a different approach
-// Instead of defining a Props type, we'll use the params directly
-
-export default function DealDetailPage({
-  params
-}: {
-  params: { id: string }
-}) {
+// For client components in Next.js App Router, we need to use React.use() to unwrap params
+export default function DealDetailPage({params}: any) {
   const router = useRouter();
   const [dealData, setDealData] = useState<DealData | null>(null);
-
+  
+  // Unwrap the params Promise using React.use()
+  const unwrappedParams = React.use(params) as { id: string };
+  const { id } = unwrappedParams;
+  
   // Fetch deal data using custom useQuery hook
   const { data, isLoading, error, refetch } = useGenericQuery<ApiResponse>(
-    ['dealDetail', params.id],
-    `/user/deal/detail/${params.id}`
+    ['dealDetail', id],
+    `/user/deal/detail/${id}`
   );
 
   useEffect(() => {
@@ -154,6 +152,7 @@ export default function DealDetailPage({
             <div className="relative bg-white rounded-lg shadow-md overflow-hidden mb-6">
               <div className="relative h-80 w-full">
                 <Image
+                  unoptimized
                   src={
                     dealData?.parentDealId?.imageUrl ||
                     dealData?.parentDealId?.brand?.image ||
@@ -296,7 +295,7 @@ export default function DealDetailPage({
               </button>
 
               <Link
-                href={`/order-form/${dealData?._id}`}
+                href={`/orderForm`}
                 className="block w-full bg-gradient-to-r from-green-600 to-teal-600 text-white py-3 rounded-lg font-medium text-center
                   hover:from-green-700 hover:to-teal-700 transition-colors duration-200"
               >

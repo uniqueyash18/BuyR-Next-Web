@@ -76,6 +76,7 @@ export default function DealCard({ item, index }: DealCardProps) {
       <div className="relative">
         <div className="relative h-40 w-full bg-gradient-to-br bg-white-50 bg-white-100">
           {!!imageUrl ? <Image
+            unoptimized
             src={imageUrl}
             alt={productName || "Product"}
             fill
