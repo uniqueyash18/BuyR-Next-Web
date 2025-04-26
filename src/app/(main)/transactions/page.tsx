@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface Transaction {
+  _id: string;
   orderIdOfPlatForm: string;
   dealId: {
     _id: any;
@@ -72,7 +73,7 @@ export default function TransactionsPage() {
   };
 
   const handleTransactionClick = (transaction: Transaction) => {
-   router.push(`/orders/${transaction.orderIdOfPlatForm}?dealId=${transaction.dealId._id}`);
+   router.push(`/orders/${transaction?._id}?dealId=${transaction.dealId._id}`);
   };
 
   return (

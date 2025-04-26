@@ -28,7 +28,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
   return (
     <div className={`relative ${containerStyles}`}>
       <div className="flex">
-        <div className="flex items-center rounded-l-md border border-r-0 border-gray-300 bg-white px-3 py-2">
+        <div className="flex items-center rounded-l-md border border-r-0 border-gray-300 bg-white px-3 py-2 text-gray-500">
           <span className="mr-1">{countryFlag} {countryCode}</span>
         </div>
         <input
@@ -37,7 +37,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
           onChange={(e) => onChangeText(e.target.value)}
           placeholder={placeholder}
           maxLength={maxLength}
-          className="flex-1 rounded-r-md border border-gray-300 py-2 px-4 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="flex-1 rounded-r-md border border-gray-300 py-2 px-4 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-black placeholder:text-gray-500"
         />
       </div>
     </div>

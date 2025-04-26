@@ -103,7 +103,7 @@ export default function DealCard({ item, index }: DealCardProps) {
 
       {/* Card Content */}
       <div className="p-4">
-        <h3 className="font-semibold text-sm capitalize mb-2 line-clamp-2 min-h-[2.5rem]">
+        <h3 className="font-semibold text-sm capitalize mb-2 line-clamp-2 min-h-[2.5rem] text-black">
           {productName}
         </h3>
 

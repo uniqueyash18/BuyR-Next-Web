@@ -66,22 +66,22 @@ export default function HomePage() {
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 {dealCategoryData.map((category: any) => (
-                  <div
+                  <Link
+                    href={`/deals/dealCategory/${category._id}`}
                     key={category._id}
-                    className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 flex flex-col items-center justify-center text-center h-32"
                   >
-                    <Link
-                      href={`/deals/dealCategory/${category._id}`}
+                    <div
                       key={category._id}
+                      className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 flex flex-col items-center justify-center text-center h-32"
                     >
                       <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-2">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                         </svg>
                       </div>
-                      <span className="text-sm font-medium">{category.name}</span>
-                    </Link>
-                  </div>
+                      <span className="text-sm font-medium text-black">{category.name}</span>
+                    </div>
+                  </Link>
                 ))}
               </div>
             </div>

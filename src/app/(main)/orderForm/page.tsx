@@ -184,7 +184,7 @@ export default function OrderFormPage() {
     onError: async (error: any) => {
       console.error("Error creating order:", error);
       updateState({ isLoading: false });
-      alert(error?.message || "Failed to create order");
+      alert(error?.response?.data?.message || "Failed to create order");
     },
   });
 

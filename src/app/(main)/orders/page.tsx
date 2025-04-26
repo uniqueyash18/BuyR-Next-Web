@@ -75,14 +75,13 @@ export default function OrdersPage() {
   } = usePostData<any, Error, any>('/user/order/getOrderList', {
     onSuccess: (data) => {
       // Update filter options when data is loaded
-      if (data?.data?.relatedData) {
-        setCategoryFilter(data.data.relatedData.categories || []);
-        setPlatformFilter(data.data.relatedData.platforms || []);
-        setBrandFilter(data.data.relatedData.brands || []);
+      if (data?.relatedData) {
+        setCategoryFilter(data?.relatedData?.categories || []);
+        setPlatformFilter(data?.relatedData?.platforms || []);
+        setBrandFilter(data?.relatedData?.brands || []);
       }
     }
   });
-console.log(orderData,'orderData')
   // State to accumulate orders
   const [accumulatedOrders, setAccumulatedOrders] = useState<Order[]>([]);
 
@@ -311,7 +310,7 @@ console.log(orderData,'orderData')
 
         {/* Date Picker Modal */}
         {isDateModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-md">
               <h3 className="text-lg font-semibold mb-4">Select Date</h3>
               <input
@@ -348,7 +347,7 @@ console.log(orderData,'orderData')
 
         {/* Filter Modal */}
         {isFilterModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">Select Options</h3>

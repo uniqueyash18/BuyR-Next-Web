@@ -65,9 +65,9 @@ const FilterModal = ({ isOpen, onClose, title, options, selectedOption, onSelect
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-6 w-full max-w-md">
-        <div className="flex justify-between items-center mb-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-hidden">
+      <div className="bg-white rounded-xl p-4 w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col relative">
+        <div className="flex justify-between items-center mb-4 sticky top-0 bg-white z-10">
           <h3 className="text-lg font-semibold">{title}</h3>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -75,16 +75,17 @@ const FilterModal = ({ isOpen, onClose, title, options, selectedOption, onSelect
             </svg>
           </button>
         </div>
-
-        <div className="max-h-80 overflow-y-auto mb-4">
+        
+        <div className="overflow-y-auto flex-grow mb-4">
           {options.map((option) => (
-            <div
+            <div 
               key={option._id}
               onClick={() => onSelect(selectedOption?._id === option._id ? null : option)}
-              className={`flex justify-between items-center p-3 mb-2 rounded-lg cursor-pointer border ${selectedOption?._id === option._id
-                ? 'border-purple-600 bg-purple-50'
-                : 'border-gray-200 hover:border-gray-300'
-                }`}
+              className={`flex justify-between items-center p-3 mb-2 rounded-lg cursor-pointer border ${
+                selectedOption?._id === option._id 
+                  ? 'border-purple-600 bg-purple-50' 
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
             >
               <span>{option.name}</span>
               {selectedOption?._id === option._id ? (
@@ -99,13 +100,15 @@ const FilterModal = ({ isOpen, onClose, title, options, selectedOption, onSelect
             </div>
           ))}
         </div>
-
-        <button
-          onClick={onApply}
-          className="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-indigo-700 transition-colors"
-        >
-          Apply Filter
-        </button>
+        
+        <div className="sticky bottom-0 bg-white pt-2">
+          <button 
+            onClick={onApply}
+            className="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-indigo-700 transition-colors"
+          >
+            Apply Filter
+          </button>
+        </div>
       </div>
     </div>
   );
