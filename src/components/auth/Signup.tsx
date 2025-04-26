@@ -34,7 +34,7 @@ const Signup = () => {
 
   const { mutate: signup, isLoading } = usePostData<{ user: any; token: string }>('/auth/signUp', {
     onSuccess: (data) => {
-      login(data.token, data.user);
+      login({...data.user, token: data.token});
       showSuccess('Signup successful');
       router.push('/');
     },
