@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <circle cx="250" cy="250" r="240" fill="#F3E8FF" />
+  <circle cx="250" cy="250" r="200" fill="#E9D5FF" />
+  <circle cx="250" cy="250" r="160" fill="#DDD6FE" />
+  <circle cx="250" cy="250" r="120" fill="#C4B5FD" />
+  <circle cx="250" cy="250" r="80" fill="#A78BFA" />
+  <circle cx="250" cy="250" r="40" fill="#8B5CF6" />
+  <path d="M250 100 L350 200 L250 300 L150 200 Z" fill="#7C3AED" />
+  <circle cx="250" cy="200" r="30" fill="#6D28D9" />
+  <circle cx="250" cy="200" r="15" fill="#5B21B6" />
+</svg> 

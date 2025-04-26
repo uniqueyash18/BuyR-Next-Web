@@ -1,0 +1,163 @@
+---
+description: 
+globs: *.tsx
+alwaysApply: false
+---
+Always start your output with "Hey buddy!!"
+- Read my complete project structure [repomix-output.xml](mdc:.cursor/rules/repomix-output.xml)
+
+Strictly follow all the rules; it's essential.
+
+# Cursor AI Project Rules – Next.js 15 + Tailwind Setup
+
+---
+
+## Project Setup Rules
+
+1. This project is built using **Next.js 15+ App Router**, and the root is inside the `src/app/` directory.
+2. **Tailwind CSS** is already fully configured — do **NOT** reinstall or modify it.
+3. Use **server components** by default. If a component includes interactivity (e.g., `useState`, `useEffect`), add `"use client"` at the top.
+4. Pages must be created using folders inside `src/app/` — for example, the signup page lives at:
+   ```
+   src/app/signup/page.tsx
+   ```
+5. Each route folder inside `src/app/` must contain a `page.tsx` file to register the route.
+
+---
+
+## Tailwind Styling Rules
+
+6. Use only **Tailwind CSS utility classes** — do not use inline styles, external CSS, or custom SCSS.
+7. Match **font sizes, paddings, margins, spacing, colors, and line heights** exactly as shown in the Figma design.
+8. Use **gray placeholders** for any image or icon if the real asset isn’t available.
+9. Use responsive Tailwind units like `w-full`, `min-h-screen`, `p-4`, etc., and maintain relative sizing.
+10. Always use layout utilities like `flex`, `grid`, `gap`, and responsive breakpoints (`sm:`, `md:`, `lg:`) for layout.
+
+---
+
+## Code Structure Rules
+
+11. Reusable components must be placed in `src/components/`.
+12. All static images and assets must be stored in `public/images/`.
+13. Keep JSX markup clean — break large UI into smaller components if it improves readability.
+14. Use semantic HTML tags wherever appropriate — buttons, headings, inputs, labels, sections.
+15. Always use **named functional components** with the syntax:
+   ```tsx
+   export default function ComponentName() {}
+   ```
+
+---
+
+## Smart Reasoning Rules
+
+16. If the Figma layout is messy or lacks proper Auto Layout, rely on **visual spacing and grouping** to infer structure.
+17. Organize components by logical hierarchy — e.g., `Header → Form → CTA → Footer`.
+18. Prioritize **clean, readable code** and accurate UI structure over matching Figma’s raw layer naming.
+19. Use common UI/UX conventions (like consistent spacing, proper alignment) where the design is unclear.
+
+---
+
+## Avoid These Practices
+
+20. ❌ Do not use any external CSS files or `styled-components`.
+21. ❌ Do not generate `tailwind.config.js` or `postcss.config.js` — they're already set up.
+22. ❌ Avoid extra wrapper `<div>`s — keep the DOM structure as minimal and meaningful as possible.
+
+
+## Tailwind Custom Color Rules
+
+23. Use Tailwind's Default Color Palette First
+   - Always prioritize using Tailwind's built-in color classes before defining custom colors.
+   - Example: Use text-blue-500, bg-gray-200 before defining new colors.
+24. Define Custom Colors Dynamically
+   - If a color is not available in Tailwind's default palette, create it dynamically using Tailwind’s theme() function inside globals.css:
+   ```css
+      @layer utilities {
+         .text-primary {
+            color: theme('colors.primary');
+         }
+         .bg-primary {
+            background-color: theme('colors.primary');
+         }
+      }
+   ```
+25. Apply Colors Through Tailwind or Utility Classes
+   - Always apply colors using Tailwind classes or custom utility classes inside your components:
+   ```tsx
+      export default function ExampleComponent() {
+         return (
+            <div className="bg-primary text-secondary">
+               {/* Component content */}
+            </div>
+         );
+      }
+   ```
+26. Use Semantic Naming for Custom Colors
+   - Name custom colors meaningfully (e.g., primary, accent) to improve readability.
+
+## Avoid These Practices
+
+27. ❌ Do Not Use Hardcoded Colors
+   - Never use direct hex, RGB, or HSL values inside components.
+   - Example: Avoid <div style={{ color: '#ff5733' }}>.
+28. ❌ Do Not Modify Tailwind's Core Configuration
+   - Do not create or alter tailwind.config.js or postcss.config.js.
+   - Tailwind CSS v4 operates with zero configuration.
+29. ❌ Do Not Introduce Unnecessary Custom Colors
+   - Only define colors that are essential to the project.
+   - Avoid excessive custom colors to keep styles manageable.
+
+
+## Animation and Transition Rules
+
+30. Use the following animation components from `@/components/transitions` for consistent page transitions:
+   - `PageTransition`: Wrap page content for smooth page-to-page transitions.
+   - `FadeInSection`: Use for individual content sections that should fade in.
+   - `AnimatedGrid`: Use for lists and grid items that should appear with staggered timing.
+   - `PageHeader`: Use for consistent, animated page headers.
+
+31. Follow this animation structure for all feature pages:
+   ```tsx
+   import { FadeInSection, AnimatedGrid, PageHeader } from "@/components/transitions";
+   
+   export default function FeaturePage() {
+     return (
+       <div className="py-8">
+         <PageHeader
+           title="Page Title"
+           description="Page description text"
+         >
+           {/* Optional header actions */}
+         </PageHeader>
+   
+         <FadeInSection className="mb-10" delay={0.1}>
+           {/* Main content section */}
+         </FadeInSection>
+   
+         <FadeInSection delay={0.3}>
+           {/* Secondary content with AnimatedGrid for lists */}
+           <AnimatedGrid staggerDelay={0.08}>
+             {items.map(item => (
+               <div key={item.id}>
+                 {/* Item content */}
+               </div>
+             ))}
+           </AnimatedGrid>
+         </FadeInSection>
+       </div>
+     );
+   }
+   ```
+
+32. Animation timing guidelines:
+   - Main page transitions: 0.3-0.5 seconds
+   - Staggered children: 0.05-0.1 second delay between items
+   - Section delays: 0.1-0.3 seconds between major sections
+   - Keep animations subtle and professional - avoid excessive motion
+
+33. Ensure all animations are accessibility-friendly by:
+   - Using CSS `prefers-reduced-motion` media query support (built into components)
+   - Keeping motion subtle with small displacements (20px or less)
+   - Avoiding animations that flash or move aggressively
+
+
