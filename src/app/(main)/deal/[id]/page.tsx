@@ -64,15 +64,19 @@ interface ApiResponse {
   message: string;
   data: DealData;
 }
-interface DealDetailProps {
-  params: { id: string };
+
+
+interface PageProps<T> {
+  params: T;
   searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-export default function DealDetail({ params, searchParams }: DealDetailProps) {
+export const DealPage = async ({ params }: PageProps<{ id: string }>) => {
+  'use client';
+  
   const router = useRouter();
   const [dealData, setDealData] = useState<DealData | null>(null);
-  
+
   // Fetch deal data using custom useQuery hook
   const { data, isLoading, error, refetch } = useGenericQuery<ApiResponse>(
     ['dealDetail', params.id],
