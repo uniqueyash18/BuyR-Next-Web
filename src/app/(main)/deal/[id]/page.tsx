@@ -9,12 +9,6 @@ import { useGenericQuery } from '@/hooks/useQuery';
 import { FadeInSection } from '@/components/transitions';
 import { showError } from '@/utils/helperFunctions';
 
-interface DealDetailProps {
-  params: {
-    id: string;
-  };
-}
-
 interface DealData {
   _id: string;
   productName: string;
@@ -71,7 +65,7 @@ interface ApiResponse {
   data: DealData;
 }
 
-const DealDetail: React.FC<DealDetailProps> = ({ params }) => {
+export default function DealDetail({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [dealData, setDealData] = useState<DealData | null>(null);
   
@@ -307,6 +301,4 @@ const DealDetail: React.FC<DealDetailProps> = ({ params }) => {
       )}
     </div>
   );
-};
-
-export default DealDetail; 
+} 
