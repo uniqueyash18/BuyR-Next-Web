@@ -64,8 +64,11 @@ interface ApiResponse {
   message: string;
   data: DealData;
 }
+interface DealDetailProps {
+  params: { id: string };
+}
 
-export default function DealDetail({ params }: any ) {
+export default function DealDetail({ params }: DealDetailProps) {
   const router = useRouter();
   const [dealData, setDealData] = useState<DealData | null>(null);
   
