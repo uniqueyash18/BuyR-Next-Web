@@ -65,18 +65,19 @@ interface ApiResponse {
   data: DealData;
 }
 
-
-interface PageProps<T> {
-  params: T;
+// Define the correct type for Next.js App Router page params
+interface PageProps {
+  params: {
+    id: string;
+  };
   searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-export const DealPage = async ({ params }: PageProps<{ id: string }>) => {
-  'use client';
-  
+// Make this a default export function with the correct type structure for Next.js App Router
+export default function DealDetailPage({ params }: PageProps) {
   const router = useRouter();
   const [dealData, setDealData] = useState<DealData | null>(null);
-
+  
   // Fetch deal data using custom useQuery hook
   const { data, isLoading, error, refetch } = useGenericQuery<ApiResponse>(
     ['dealDetail', params.id],
