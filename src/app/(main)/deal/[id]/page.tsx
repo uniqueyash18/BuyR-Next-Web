@@ -71,7 +71,7 @@ interface PageProps<T> {
   searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-export const DealPage = async ({ params }: PageProps<{ id: string }>) => {
+export const DealPage = async ({ params }: PageProps<{ id: any }>) => {
   'use client';
   
   const router = useRouter();
