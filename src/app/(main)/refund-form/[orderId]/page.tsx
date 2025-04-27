@@ -12,7 +12,7 @@ import type { Field } from '@/components/CustomForm/types';
 
 // API endpoints
 const SUBMIT_REVIEW_FORM = '/user/order/reviewFormSubmit';
-const UPDATE_ORDER = '/user/order/update';
+const UPDATE_REVIEW_FORM = '/user/order/reviewFormSubmit';
 
 interface RefundFormData {
   profileName: string;
@@ -61,13 +61,13 @@ export default function RefundFormPage({ params }: any) {
 
   // Check if review form is rejected
   const isReviewFormRejected = (status?: string) => {
-    return status === 'review_rejected';
+    return status === 'reviewFormRejected';
   };
 
   // Submit review form mutation
   const { mutate: submitReviewForm } = usePostData<ApiResponse, Error, any>(
     isReviewFormRejected(orderData?.data?.orderFormStatus) 
-      ? UPDATE_ORDER
+      ? UPDATE_REVIEW_FORM
       : SUBMIT_REVIEW_FORM,
     {
       onSuccess: (data) => {
@@ -199,16 +199,8 @@ export default function RefundFormPage({ params }: any) {
                 fields={fields}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit}
+                onReset={handleReset}
               />
-              
-              <div className="flex justify-center mt-4">
-                <button
-                  onClick={handleReset}
-                  className="text-red-600 hover:text-red-800 font-medium"
-                >
-                  Reset
-                </button>
-              </div>
             </div>
           )}
         </div>

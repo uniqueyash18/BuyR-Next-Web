@@ -72,6 +72,7 @@ interface DealData {
 }
 
 interface OrderData {
+  _id?:string;
   dealId: DealData;
   orderIdOfPlatForm?: string;
   orderFormStatus: string;
@@ -86,6 +87,7 @@ interface OrderData {
   reviewScreenShot?: string;
   sellerFeedback?: string;
   finalCashBackForUser?: string;
+  reviewLink?:string
 }
 
 interface ApiResponse {
@@ -132,15 +134,15 @@ export default function OrderDetailPage({ params }: any) {
   };
 
   const handleFillReviewForm = () => {
-    router.push(`/refund-form/${params.orderId}`);
+    router.push(`/refund-form/${data?.data?._id}`);
   };
 
   const handleUpdateReviewForm = () => {
-    router.push(`/refund-form/${params.orderId}`);
+    router.push(`/refund-form/${data?.data?._id}`);
   };
 
   const handleUpdateOrderForm = () => {
-    router.push(`/update-order-form/${params.orderId}`);
+    router.push(`/orderForm/${data?.data?._id}`);
   };
 
   const checkIsOrderAccepted = (status?: string) => {
@@ -148,11 +150,11 @@ export default function OrderDetailPage({ params }: any) {
   };
 
   const checkIsReviewFormRejected = (status?: string) => {
-    return status === 'review_rejected';
+    return status === 'reviewFormRejected';
   };
 
   const checkIsOrderFormRejected = (status?: string) => {
-    return status === 'order_rejected';
+    return status === 'rejected';
   };
 
   // Function to check order status
@@ -174,7 +176,7 @@ export default function OrderDetailPage({ params }: any) {
   };
 
   const checkIsAnyFormRejected = (status?: string) => {
-    return status === 'order_rejected' || status === 'review_rejected';
+    return status === 'rejected' || status === 'reviewFormRejected';
   };
   if (isLoading) {
     return (
@@ -183,6 +185,7 @@ export default function OrderDetailPage({ params }: any) {
       </div>
     );
   }
+
   // Function to check if order is pending
   const checkIsOrderPending = (status: string) => {
     return status === "pending" || status === "reviewFormSubmitted";
@@ -376,7 +379,7 @@ export default function OrderDetailPage({ params }: any) {
           </div>
 
           {/* Review Link */}
-          {dealData?.reviewLink && (
+          {orderData?.reviewLink && (
             <div className="bg-white rounded-xl shadow-md p-6 mb-6">
               <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -385,12 +388,12 @@ export default function OrderDetailPage({ params }: any) {
                 Review Link
               </h3>
               <a
-                href={dealData.reviewLink}
+                href={orderData.reviewLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center text-blue-500 hover:text-blue-700 transition-colors"
               >
-                <span className="truncate">{dealData.reviewLink}</span>
+                <span className="truncate">{orderData.reviewLink}</span>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
@@ -471,7 +474,7 @@ export default function OrderDetailPage({ params }: any) {
                 )}
 
                 {/* Review Screenshot */}
-                {dealData?.reviewScreenShot && (
+                {orderData?.reviewScreenShot && (
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <div className="flex justify-between items-center mb-2">
                       <h4 className="font-medium text-gray-800">Review Screenshot</h4>

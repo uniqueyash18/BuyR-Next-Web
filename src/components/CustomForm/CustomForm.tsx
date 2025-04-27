@@ -18,7 +18,7 @@ const CustomForm: React.FC<CustomFormProps> = ({
   showReset = true,
   className = '',
   dealId = '',
-  showSuccess = (message: string) => {},
+  showSuccess = (message: string) => { },
 }) => {
   const [uploadingImage, setUploadingImage] = useState<{ fieldName: string } | null>(null);
   const sumPrices = (allItems: object[], type: string) => {
@@ -49,7 +49,7 @@ const CustomForm: React.FC<CustomFormProps> = ({
         return;
       }
     }
-    
+
     if (fieldName === 'productName') {
       let priceValue = sumPrices(value, 'price');
       let cashBackValue = sumPrices(value, 'cashback');
@@ -66,12 +66,12 @@ const CustomForm: React.FC<CustomFormProps> = ({
       (fieldName === 'orderScreenShot')
     ) {
       const confirmUpload = window.confirm('Are you sure you want to upload this image?');
-      
+
       if (!confirmUpload) {
         if (resetField) resetField(fieldName);
         return;
       }
-      
+
       const uploadImageAsync = async () => {
         setUploadingImage({ fieldName });
         try {
@@ -89,11 +89,11 @@ const CustomForm: React.FC<CustomFormProps> = ({
           setUploadingImage(null);
         }
       };
-      
+
       uploadImageAsync();
       return;
     }
-    
+
     setFieldValue(fieldName, value);
   };
 
@@ -168,7 +168,15 @@ const CustomForm: React.FC<CustomFormProps> = ({
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={onSubmit}
+      onSubmit={async (values, { setSubmitting }) => {
+        try {
+          onSubmit(values);
+        } catch (error) {
+          console.error('Submit error:', error);
+        } finally {
+          setSubmitting(false);
+        }
+      }}
       key={resetKey}
       enableReinitialize
     >
