@@ -490,7 +490,7 @@ export default function OrderFormPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-20 pb-16">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-4 pb-16">
       <div className="max-w-4xl mx-auto px-4">
         <FadeInSection delay={0.1}>
           <div className="bg-white rounded-xl shadow-sm p-6 mb-6">

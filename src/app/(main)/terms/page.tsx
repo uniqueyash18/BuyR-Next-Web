@@ -96,7 +96,7 @@ export default function TermsPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 pb-16">
+    <div className="min-h-screen bg-gray-50 pt-4 pb-16">
       <div className="max-w-7xl mx-auto px-4">
         <FadeInSection delay={0.1}>
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">

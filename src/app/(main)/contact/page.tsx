@@ -28,7 +28,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-indigo-50 pt-20 pb-16">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-indigo-50 pt-4 pb-16">
       <div className="max-w-4xl mx-auto px-4">
         <FadeInSection delay={0.1}>
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
