@@ -67,7 +67,7 @@ export default function CustomScrollBanner({ data, autoScrollInterval = 3000 }: 
 
   return (
     <div 
-      className="relative w-full h-100 rounded-xl overflow-hidden"
+      className="relative w-full aspect-[2/1] md:aspect-[3/1] rounded-xl overflow-hidden"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
