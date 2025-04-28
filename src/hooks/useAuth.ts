@@ -91,16 +91,17 @@ export const useAuth = () => {
     // Also store in localStorage for backward compatibility
     localStorage.setItem('userData', JSON.stringify(userData));
     // Update Redux state
+    setCookie('auth-token', userData.token);
     dispatch(setUser(userData));
   };
 
   const logout = () => {
     // Remove token from cookie
     deleteCookie('accessToken');
-    
+
     // Also remove from localStorage for backward compatibility
     localStorage.removeItem('userData');
-    
+
     // Clear Redux state
     dispatch(clearUser());
   };

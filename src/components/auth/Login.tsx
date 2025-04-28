@@ -93,7 +93,7 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white/90 p-8 rounded-2xl shadow-2xl border border-orange-100">
         <div className="flex flex-col items-center mb-4">
-          <Image src="/images/logo.jpeg" alt="BuyR Logo" width={90} height={90} className="mb-2 rounded-lg" priority />
+          <Image src="/images/logo.png" alt="BuyR Logo" width={90} height={90} className="mb-2 rounded-lg" priority />
           <TextContainer text="Welcome Back" style={styles.logintxt} />
           <TextContainer text="Sign in to continue" style={styles.welcomeBack} />
         </div>
