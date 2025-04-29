@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { getMessaging } from 'firebase/messaging';
+import { getMessaging, Messaging } from 'firebase/messaging';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBWXI9A_rFIrG1IcYTGH9PlhGg93WNYrLA",
@@ -13,6 +13,11 @@ const firebaseConfig = {
 
 // Initialize Firebase only if it hasn't been initialized already
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-const messaging = getMessaging(app);
+
+// Only initialize messaging on the client side
+let messaging: Messaging | undefined;
+if (typeof window !== 'undefined') {
+  messaging = getMessaging(app);
+}
 
 export { app, messaging }; 
