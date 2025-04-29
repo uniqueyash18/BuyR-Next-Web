@@ -37,8 +37,7 @@ interface SearchResult {
 
 export default function SearchPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
+  const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<"deals" | "brands">("deals");
   const [page, setPage] = useState(0);
   const [items, setItems] = useState<any[]>([]);
