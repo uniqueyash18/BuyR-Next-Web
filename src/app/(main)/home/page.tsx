@@ -54,9 +54,9 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="p-4 md:p-6 space-y-12 max-w-7xl mx-auto">
+      <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
         {/* Search Bar */}
-        <FadeInSection delay={0.05}>
+        <FadeInSection className="w-full pt-4"  delay={0.05}>
           <Link href="/search" className="relative">
             <input
               type="text"

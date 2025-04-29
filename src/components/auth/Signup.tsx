@@ -10,6 +10,7 @@ import PhoneNumberInput from '../PhoneNumberInput';
 import TextContainer from '../TextContainer';
 import { styles } from './styles';
 import { useAuth } from '@/hooks/useAuth';
+import requestNotificationPermission from '@/utils/firebase';
 
 const Signup = () => {
   const router = useRouter();
@@ -34,11 +35,11 @@ const Signup = () => {
 
   const { mutate: signup, isLoading } = usePostData<{ user: any; token: string }>('/auth/signUp', {
     onSuccess: (data) => {
-      login({...data.user, token: data.token});
+      login({ ...data.user, token: data.token });
       showSuccess('Signup successful');
-      router.push('/');
+      router.push('/home');
     },
-    onError: (error:any) => {
+    onError: (error: any) => {
       showError(error?.response?.data?.message || error.message || 'Signup failed');
     },
   });
@@ -95,10 +96,19 @@ const Signup = () => {
     if (!validateForm()) {
       return;
     }
-    signup({
-      ...(activeTab === 'phone' ? { phoneNumber } : { email }),
-      password,
-      currentAdminReference: referenceId,
+    requestNotificationPermission().then((token) => {
+      signup({
+        ...(activeTab === 'phone' ? { phoneNumber } : { email }),
+        password,
+        currentAdminReference: referenceId,
+        fcmToken: token,
+      });
+    }).catch((error) => {
+      signup({
+        ...(activeTab === 'phone' ? { phoneNumber } : { email }),
+        password,
+        currentAdminReference: referenceId,
+      });
     });
   };
 

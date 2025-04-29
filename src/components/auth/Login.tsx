@@ -10,6 +10,7 @@ import PhoneNumberInput from '../PhoneNumberInput';
 import TextContainer from '../TextContainer';
 import { styles } from './styles';
 import { useAuth } from '@/hooks/useAuth';
+import requestNotificationPermission from '@/utils/firebase';
 
 const Login = () => {
   const router = useRouter();
@@ -20,6 +21,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [referenceId, setReferenceId] = useState('');
+  const [fcmLoading, setFcmLoading] = useState(false);
   const [errors, setErrors] = useState({
     phoneNumber: '',
     email: '',
@@ -29,9 +31,9 @@ const Login = () => {
 
   const { mutate: loginApi, isLoading } = usePostData<{ user: any; token: string }>('/auth/signIn', {
     onSuccess: (data) => {
-      login({...data.user, token: data.token});
+      login({ ...data.user, token: data.token });
       showSuccess('Login successful');
-      router.push('/');
+      router.push('/home');
     },
     onError: (error: any) => {
       showError(error?.response?.data?.message || error.message || 'Login failed');
@@ -82,10 +84,22 @@ const Login = () => {
     if (!validateForm()) {
       return;
     }
-    loginApi({
-      ...(activeTab === 'phone' ? { phoneNumber } : { email }),
-      password,
-      currentAdminReference: referenceId,
+    setFcmLoading(true);
+    requestNotificationPermission().then((token) => {
+      loginApi({
+        ...(activeTab === 'phone' ? { phoneNumber } : { email }),
+        password,
+        currentAdminReference: referenceId,
+        fcmToken: token,
+      });
+    }).catch((error) => {
+      loginApi({
+        ...(activeTab === 'phone' ? { phoneNumber } : { email }),
+        password,
+        currentAdminReference: referenceId,
+      });
+    }).finally(() => {
+      setFcmLoading(false);
     });
   };
 
@@ -185,7 +199,7 @@ const Login = () => {
         <GradientButton
           onPress={handleLogin}
           btnText="Login"
-          indicator={isLoading}
+          indicator={isLoading || fcmLoading}
         />
 
         <div className="flex items-center my-6">

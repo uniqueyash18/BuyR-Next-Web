@@ -161,7 +161,7 @@ export default function OrdersPage() {
 
   // Function to check if any form is rejected
   const checkIsAnyFormRejected = (status: string) => {
-    return status === "rejected";
+    return status === "rejected" || status === "reviewFormRejected";
   };
 
   // Function to get status color
