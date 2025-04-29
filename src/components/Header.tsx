@@ -23,7 +23,7 @@ const Header = () => {
   }, []);
 
   const tabs = [
-    { name: "HOME", path: "/", icon: "/images/home.svg" },
+    { name: "HOME", path: "/home", icon: "/images/home.svg" },
     { name: "FORMS", path: "/orderForm", icon: "/images/form.svg" },
     { name: "MY DEAL ORDERS", path: "/orders", icon: "/images/order.svg" },
     { name: "REFER", path: "/refer", icon: "/images/refer.svg" },
@@ -42,8 +42,8 @@ const Header = () => {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <FadeInSection delay={0.1}>
-            <Link href="/" className="flex items-center">
-              <div className="relative w-15 h-10 mr-2">
+            <Link href="/home" className="flex items-center">
+              <div className="relative w-20 h-15 mr-2">
                 <Image
                   src="/images/logo.png"
                   alt="Logo"

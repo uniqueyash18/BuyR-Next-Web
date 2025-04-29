@@ -7,31 +7,45 @@ import NoDataFound from "@/components/NoDataFound";
 import { FadeInSection } from "@/components/transitions";
 import { getHomeData } from "@/services/api";
 import { useQuery } from "@tanstack/react-query";
+import { Search } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function HomePage() {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
   const { data: homeData, isLoading, error, refetch } = useQuery({
     queryKey: ["homeData"],
     queryFn: getHomeData,
-    retry: 1, // Only retry once
+    retry: 1,
   });
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-4">
-        <div className="animate-pulse space-y-6">
-          <div className="h-48 bg-gray-200 rounded-xl" />
-          <div className="h-40 bg-gray-200 rounded-xl" />
-          <div className="h-64 bg-gray-200 rounded-xl" />
-          <div className="h-64 bg-gray-200 rounded-xl" />
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-4 md:p-6">
+        <div className="animate-pulse space-y-8">
+          <div className="h-[400px] bg-gray-200 rounded-2xl" />
+          <div className="h-48 bg-gray-200 rounded-2xl" />
+          <div className="h-64 bg-gray-200 rounded-2xl" />
+          <div className="h-64 bg-gray-200 rounded-2xl" />
         </div>
       </div>
     );
   }
+
   if (error) {
     console.error("Error loading home data:", error);
     return <NoDataFound />;
   }
-  // Ensure data exists before rendering
+
   if (!homeData) {
     return <NoDataFound />;
   }
@@ -40,11 +54,25 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="p-4 space-y-10 max-w-7xl mx-auto">
-        {/* Banner Section */}
+      <div className="p-4 md:p-6 space-y-12 max-w-7xl mx-auto">
+        {/* Search Bar */}
+        <FadeInSection delay={0.05}>
+          <Link href="/search" className="relative">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search deals and brands..."
+              className="w-full h-14 pl-12 pr-4 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-white shadow-sm text-gray-400"
+            />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          </Link>
+        </FadeInSection>
+
+        {/* Hero Banner Section */}
         {Poster && Poster.length > 0 && (
           <FadeInSection delay={0.1}>
-            <div className="rounded-xl overflow-hidden shadow-lg">
+            <div className="rounded-2xl overflow-hidden shadow-xl">
               <CustomScrollBanner data={Poster} />
             </div>
           </FadeInSection>
