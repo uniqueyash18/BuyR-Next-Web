@@ -48,7 +48,7 @@ export default function HomePage() {
               {[
                 { label: "Features", link: "#features" },
                 { label: "How It Works", link: "#how-it-works" },
-                { label: "Download", link: "#download" },
+                { label: "Download", link: process.env.NEXT_PUBLIC_API_URL + "buyr.apk" },
                 { label: "Tutorials", link: "/tutorial" },
                 { label: "Login", link: "/auth/login" },
               ].map((item, index) => (
@@ -91,7 +91,7 @@ export default function HomePage() {
             </p>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
-                href={"#"}
+                href={process.env.NEXT_PUBLIC_API_URL + "buyr.apk"}
                 download
                 className="inline-block bg-white text-blue-600 font-bold py-4 px-8 rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30"
               >
