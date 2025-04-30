@@ -372,7 +372,7 @@ export default function OrderDetailPage({ params }: any) {
               {orderData?.exchangeDealProducts && orderData?.exchangeDealProducts?.length > 0 && (
                 <div className="flex justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Exchange Product</span>
-                  <span className="font-medium">{orderData?.exchangeDealProducts?.map((product: string) => product).join(', ')}</span>
+                  <span className="font-medium text-gray-400">{orderData?.exchangeDealProducts?.map((product: string) => product).join(', ')}</span>
                 </div>
               )}
             </div>

@@ -34,4 +34,7 @@ export interface CustomFormProps {
   uploadImage?: (file: any, dealId: string) => Promise<{ data: string; message: string }>;
   sumPrices?: (value: any, field: string) => number;
   toString?: (value: any) => string;
+  selectedDeal?: any;
+  onExchangeCheck?: (item: string) => void;
+  selectedExchange?: string;
 } 

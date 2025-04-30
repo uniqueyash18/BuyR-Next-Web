@@ -132,8 +132,9 @@ export default function AccountPage() {
               />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">{userData.name}</h2>
-              <p className="text-gray-500">{userData.email}</p>
+              <h2 className="text-xl font-semibold text-gray-800">{userData?.name}</h2>
+              <p className="text-gray-500">{userData?.email}</p>
+              <p className="text-gray-500">Med Id: <span className="font-bold">{userData?.currentAdminReference?.userName}</span></p>
             </div>
           </div>
         </FadeInSection>

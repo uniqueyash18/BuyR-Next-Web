@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { CustomDatePicker, CustomImageUpload, CustomInput, CustomSelect } from './index';
 import { CustomFormProps, Field as FormField } from './types';
 import { uploadImage } from '@/utils/helperFunctions';
+import { isEmpty } from 'lodash';
 
 const CustomForm: React.FC<CustomFormProps> = ({
   fields,
@@ -19,6 +20,9 @@ const CustomForm: React.FC<CustomFormProps> = ({
   className = '',
   dealId = '',
   showSuccess = (message: string) => { },
+  selectedDeal = {},
+  onExchangeCheck = () => { },
+  selectedExchange = ''
 }) => {
   const [uploadingImage, setUploadingImage] = useState<{ fieldName: string } | null>(null);
   const sumPrices = (allItems: object[], type: string) => {
@@ -183,6 +187,28 @@ const CustomForm: React.FC<CustomFormProps> = ({
       {(formikProps) => (
         <Form className={`space-y-6 ${className}`}>
           {fields.map((field) => renderField(field, formikProps))}
+
+          {!isEmpty(selectedDeal[0]?.exchangeDealProducts) && (
+            <div className="mt-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Select Product For Exchange</h3>
+              <div className="space-y-2">
+                {selectedDeal[0]?.exchangeDealProducts.map((item: string, index: number) => (
+                  <div key={index} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={`exchange-${index}`}
+                      checked={item === selectedExchange}
+                      onChange={() => onExchangeCheck(item)}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor={`exchange-${index}`} className="ml-2 block text-sm text-gray-900">
+                      {item}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="flex justify-between items-center pt-4">
             <button

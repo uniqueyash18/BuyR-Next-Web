@@ -336,7 +336,7 @@ export default function OrderFormPage({ params }: any) {
         setFieldValue('productName', []);
         setFieldValue('brandName', '');
         setFieldValue('categoryName', '');
-        updateState({ newDeals: [], brandOptions: [], allCategories: [], allBrandDeals: [], selectedDealCategory: {} });
+        updateState({ newDeals: [], brandOptions: [], allCategories: [], allBrandDeals: [], selectedDealCategory: {}, selectedExchange: '' });
         return true;
       } else {
         updateState({ selectedPlatform: value });
@@ -344,14 +344,14 @@ export default function OrderFormPage({ params }: any) {
         setFieldValue('productName', []);
         setFieldValue('brandName', '');
         setFieldValue('categoryName', '');
-        updateState({ newDeals: [], brandOptions: [], allCategories: [], allBrandDeals: [], selectedDealCategory: {} });
+        updateState({ newDeals: [], brandOptions: [], allCategories: [], allBrandDeals: [], selectedDealCategory: {}, selectedExchange: '' });
       }
     }
 
     if (field === 'brandName') {
       setFieldValue('productName', []);
       setFieldValue('categoryName', '');
-      updateState({ newDeals: [], allCategories: [], selectedDealCategory: {} });
+      updateState({ newDeals: [], allCategories: [], selectedDealCategory: {}, selectedExchange: '' });
       getDealsByBrand({
         type: 'brand',
         id: value?.id,
@@ -363,7 +363,7 @@ export default function OrderFormPage({ params }: any) {
     if (field === 'categoryName') {
       let newDeals = allBrandDeals.filter((item: any) => item?.dealCategory?._id === value?.id);
       setFieldValue('productName', []);
-      updateState({ newDeals: newDeals, selectedDeal: [], selectedDealCategory: value });
+      updateState({ newDeals: newDeals, selectedDeal: [], selectedDealCategory: value, selectedExchange: '' });
     }
 
     if (field === 'productName') {
@@ -375,6 +375,10 @@ export default function OrderFormPage({ params }: any) {
     }
   };
 
+  // Handle exchange product selection
+  const handleExchangeCheck = (item: string) => {
+    updateState({ selectedExchange: item });
+  };
 
   // Define form fields for CustomForm
   const formFields: Field[] = [
@@ -501,13 +505,16 @@ export default function OrderFormPage({ params }: any) {
               onSubmit={handleSubmit}
               resetKey={resetKey}
               onReset={() => {
-                updateState({ selectedPlatform: {}, selectedDeal: [] });
+                updateState({ selectedPlatform: {}, selectedDeal: [], selectedExchange: '' });
                 setResetKey(prevKey => prevKey + 1);
               }}
               onInputValueChange={handleFieldChange}
               onDropdownOpen={checkPlatformSelected}
-              submitButtonText="Submit Order"
+              submitButtonText="Update Order"
               className="space-y-6"
+              selectedDeal={selectedDeal}
+              onExchangeCheck={handleExchangeCheck}
+              selectedExchange={selectedExchange}
             />
           </div>
         </FadeInSection>
