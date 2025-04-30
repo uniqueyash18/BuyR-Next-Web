@@ -18,16 +18,16 @@ const Signup = () => {
   const [activeTab, setActiveTab] = useState('phone');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [countryCode, setCountryCode] = useState('US');
-  const [countryFlag, setCountryFlag] = useState('🇺🇸');
   const [referenceId, setReferenceId] = useState('');
   const [errors, setErrors] = useState({
     phoneNumber: '',
     email: '',
+    name: '',
     password: '',
     confirmPassword: '',
     referenceId: ''
@@ -48,11 +48,18 @@ const Signup = () => {
     const newErrors = {
       phoneNumber: '',
       email: '',
+      name: '',
       password: '',
       confirmPassword: '',
       referenceId: ''
     };
     let isValid = true;
+
+    if (!name) {
+      newErrors.name = 'Name is required';
+      isValid = false;
+    }
+
     if (activeTab === 'phone') {
       if (!phoneNumber) {
         newErrors.phoneNumber = 'Phone number is required';
@@ -98,6 +105,7 @@ const Signup = () => {
     }
     requestNotificationPermission().then((token) => {
       signup({
+        name,
         ...(activeTab === 'phone' ? { phoneNumber } : { email }),
         password,
         currentAdminReference: referenceId,
@@ -105,6 +113,7 @@ const Signup = () => {
       });
     }).catch((error) => {
       signup({
+        name,
         ...(activeTab === 'phone' ? { phoneNumber } : { email }),
         password,
         currentAdminReference: referenceId,
@@ -137,6 +146,19 @@ const Signup = () => {
         </div>
 
         <div className="space-y-4">
+          <div>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Name"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 text-black placeholder:text-gray-500"
+            />
+            {errors.name && (
+              <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+            )}
+          </div>
+
           {activeTab === 'phone' ? (
             <div>
               <PhoneNumberInput
@@ -170,7 +192,7 @@ const Signup = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 text-black placeholder:text-gray-500"
+              className="w-full px-3 py-2 border pr-18 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 text-black placeholder:text-gray-500"
             />
             <button
               type="button"
@@ -190,7 +212,7 @@ const Signup = () => {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm Password"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 text-black placeholder:text-gray-500"
+              className="w-full px-3 py-2 border pr-18 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 text-black placeholder:text-gray-500"
             />
             <button
               type="button"

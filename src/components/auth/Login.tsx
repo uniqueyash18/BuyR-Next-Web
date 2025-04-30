@@ -161,7 +161,7 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 text-black placeholder:text-gray-500"
+              className="w-full px-3 py-2 pr-18 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 text-black placeholder:text-gray-500"
             />
             <button
               type="button"
@@ -190,7 +190,7 @@ const Login = () => {
         </div>
 
         <button
-          onClick={() => router.push('/forgot-password')}
+          onClick={() => router.push('/auth/forgot-password')}
           className="block ml-auto text-sm text-orange-600 hover:underline mt-2 mb-4"
         >
           Forgot Password?
