@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
     confirmPassword: ''
   });
 
-  const { mutate: sendOtp } = usePostData<{ message?: string }>('/auth/send-otp', {
+  const { mutate: sendOtp } = usePostData<{ message?: string }>('/auth/forgetPassword', {
     onSuccess: (data) => {
       setIsLoading(false);
       setIsEmailAdded(true);
@@ -38,11 +38,11 @@ export default function ForgotPasswordPage() {
     },
   });
 
-  const { mutate: verifyOtp } = usePostData('/auth/verify-otp', {
+  const { mutate: verifyOtp } = usePostData('/auth/resetPassword', {
     onSuccess: () => {
       setIsLoading(false);
       showSuccess('Password reset successful');
-      router.push('/login');
+      router.push('/auth/login');
     },
     onError: (error) => {
       setIsLoading(false);
@@ -113,10 +113,10 @@ export default function ForgotPasswordPage() {
     }
 
     setIsLoading(true);
-    verifyOtp({ 
-      otp: otpInput, 
-      email, 
-      password 
+    verifyOtp({
+      otp: otpInput,
+      email,
+      password
     });
   };
 
@@ -141,14 +141,14 @@ export default function ForgotPasswordPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  className="pl-10 mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="pl-10 mt-1 w-full px-3 py-2 border text-black placeholder:text-gray-500 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">{errors.email}</p>
               )}
             </div>
-            
+
             <GradientButton
               onPress={handleSendOtp}
               btnText="Next"
@@ -183,7 +183,7 @@ export default function ForgotPasswordPage() {
                 onChange={(e) => setOtpInput(e.target.value)}
                 placeholder="Enter 4-digit code"
                 maxLength={4}
-                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="mt-1 w-full px-3 py-2 border text-black placeholder:text-gray-500 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
               {errors.otp && (
                 <p className="mt-1 text-sm text-red-600">{errors.otp}</p>
@@ -196,36 +196,24 @@ export default function ForgotPasswordPage() {
                   <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                     New Password
                   </label>
-                  <div className="mt-1 relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Image 
-                        src="/images/lock-icon.png" 
-                        alt="Lock icon" 
-                        width={20} 
-                        height={20} 
-                        className="text-gray-400"
-                      />
-                    </div>
+                  <div className="relative">
                     <input
-                      id="password"
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter new password"
-                      className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      placeholder="Password"
+                      className="w-full px-3 py-2 border pr-18 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 text-black placeholder:text-gray-500"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-2 text-gray-500"
                     >
-                      <Image 
-                        src={showPassword ? "/images/see-eye.png" : "/images/hide-eye.png"} 
-                        alt={showPassword ? "Hide password" : "Show password"} 
-                        width={20} 
-                        height={20} 
-                      />
+                      {showPassword ? 'Hide' : 'Show'}
                     </button>
+                    {errors.password && (
+                      <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                    )}
                   </div>
                   {errors.password && (
                     <p className="mt-1 text-sm text-red-600">{errors.password}</p>
@@ -236,36 +224,24 @@ export default function ForgotPasswordPage() {
                   <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
                     Confirm Password
                   </label>
-                  <div className="mt-1 relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Image 
-                        src="/images/lock-icon.png" 
-                        alt="Lock icon" 
-                        width={20} 
-                        height={20} 
-                        className="text-gray-400"
-                      />
-                    </div>
+                  <div className="relative">
                     <input
-                      id="confirmPassword"
                       type={showConfirmPassword ? 'text' : 'password'}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Confirm new password"
-                      className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      placeholder="Confirm Password"
+                      className="w-full px-3 py-2 border pr-18 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 text-black placeholder:text-gray-500"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       className="absolute right-3 top-2 text-gray-500"
                     >
-                      <Image 
-                        src={showConfirmPassword ? "/images/see-eye.png" : "/images/hide-eye.png"} 
-                        alt={showConfirmPassword ? "Hide password" : "Show password"} 
-                        width={20} 
-                        height={20} 
-                      />
+                      {showConfirmPassword ? 'Hide' : 'Show'}
                     </button>
+                    {errors.confirmPassword && (
+                      <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
+                    )}
                   </div>
                   {errors.confirmPassword && (
                     <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>

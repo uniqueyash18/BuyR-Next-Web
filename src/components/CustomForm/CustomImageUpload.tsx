@@ -20,6 +20,7 @@ const CustomImageUpload: React.FC<CustomImageUploadProps> = ({
   isUploading = false
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [inputKey, setInputKey] = useState<number>(0);
   
   // Set preview URL when value changes
   useEffect(() => {
@@ -59,6 +60,8 @@ const CustomImageUpload: React.FC<CustomImageUploadProps> = ({
   const handleRemoveImage = () => {
     setPreviewUrl(null);
     onChange('');
+    // Reset the input by changing its key
+    setInputKey(prevKey => prevKey + 1);
   };
 
   return (
@@ -71,6 +74,7 @@ const CustomImageUpload: React.FC<CustomImageUploadProps> = ({
       )}
       <div className="flex items-center space-x-4">
         <input
+          key={inputKey}
           type="file"
           id={field.name}
           name={field.name}

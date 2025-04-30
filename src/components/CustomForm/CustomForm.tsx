@@ -64,11 +64,15 @@ const CustomForm: React.FC<CustomFormProps> = ({
       setFieldValue('finalCashBackForUser', '');
     }
     if (
-      (fieldName === 'deliveredScreenshot') ||
+      ((fieldName === 'deliveredScreenshot') ||
       (fieldName === 'reviewScreenshot') ||
       (fieldName === 'sellerFeedback') ||
-      (fieldName === 'orderScreenShot')
+      (fieldName === 'orderScreenShot'))
     ) {
+      if (!value) {
+        setFieldValue(fieldName, '');
+        return;
+      }
       const confirmUpload = window.confirm('Are you sure you want to upload this image?');
 
       if (!confirmUpload) {
