@@ -324,7 +324,7 @@ export default function AllDealsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {(isEmpty(filteredData) ? allDealsData : filteredData).map((deal: Deal, index: number) => (
                 <div
-                  key={deal._id}
+                  key={deal._id + index}
                 >
                   <DealCard item={deal} index={index} />
                 </div>

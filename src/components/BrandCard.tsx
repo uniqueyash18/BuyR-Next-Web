@@ -26,7 +26,7 @@ export default function BrandCard({ item, index }: BrandCardProps) {
       <div className="relative h-40 w-full bg-white">
         <Image
           src={item.image || "/images/placeholder.png"}
-          alt={item.name}
+          alt={item?.name || "Brand"}
           fill
           className="object-contain p-4"
         />

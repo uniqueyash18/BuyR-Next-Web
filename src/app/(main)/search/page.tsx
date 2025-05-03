@@ -6,6 +6,7 @@ import NoDataFound from "@/components/NoDataFound";
 import { FadeInSection } from "@/components/transitions";
 import usePostData from "@/hooks/usePostData";
 import { Search } from "lucide-react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 
@@ -44,8 +45,8 @@ export default function SearchPage() {
   const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
 
   const { data, isLoading, error, mutate } = usePostData<{ data: any[] }>(
-    searchType === "brands" 
-      ? "/user/brand/getActiveBrands" 
+    searchType === "brands"
+      ? "/user/brand/getActiveBrands"
       : "/user/deal/activeDeals",
     {
       onSuccess: (data: { data: any[] }) => {
@@ -120,21 +121,19 @@ export default function SearchPage() {
             <div className="flex space-x-4">
               <button
                 onClick={() => setSearchType("deals")}
-                className={`px-4 py-2 rounded-lg transition-all duration-300 ${
-                  searchType === "deals"
+                className={`px-4 py-2 rounded-lg transition-all duration-300 ${searchType === "deals"
                     ? "bg-blue-500 text-white"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
+                  }`}
               >
                 Deals
               </button>
               <button
                 onClick={() => setSearchType("brands")}
-                className={`px-4 py-2 rounded-lg transition-all duration-300 ${
-                  searchType === "brands"
+                className={`px-4 py-2 rounded-lg transition-all duration-300 ${searchType === "brands"
                     ? "bg-blue-500 text-white"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
+                  }`}
               >
                 Brands
               </button>
@@ -165,7 +164,14 @@ export default function SearchPage() {
                     {searchType === "deals" ? (
                       <DealCard item={item} index={index} />
                     ) : (
-                      <BrandCard item={item} index={index} />
+                      <Link
+                        href={`/deals/brand/${item._id}`}
+                        key={item._id}
+                      >
+                        <div key={item._id} className="snap-start flex-shrink-0 w-64">
+                          <BrandCard item={item} index={index} />
+                        </div>
+                      </Link>
                     )}
                   </div>
                 ))}
