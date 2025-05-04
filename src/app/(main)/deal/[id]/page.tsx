@@ -116,25 +116,25 @@ export default function DealDetailPage({params}: any) {
       : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
-      <div className="bg-white shadow-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="bg-white shadow-sm sticky top-0 z-10">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <button
             onClick={handleBack}
-            className="flex items-center text-gray-700 hover:text-gray-900"
+            className="flex items-center text-gray-700 hover:text-gray-900 transition-colors duration-200"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
             Back
           </button>
-          <h1 className="text-xl font-bold text-gray-800">Deal Detail</h1>
+          <h1 className="text-xl font-bold text-gray-800">Deal Details</h1>
           <button
             onClick={() => shareProductLink(dealData?._id || '')}
-            className="text-gray-700 hover:text-gray-900"
+            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
             </svg>
           </button>
@@ -146,11 +146,11 @@ export default function DealDetailPage({params}: any) {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
       ) : (
-        <div className="container mx-auto px-4 py-6">
+        <div className="max-w-4xl mx-auto px-4 py-8">
           <FadeInSection delay={0.1}>
             {/* Product Image */}
-            <div className="relative bg-white rounded-lg shadow-md overflow-hidden mb-6">
-              <div className="relative h-80 w-full">
+            <div className="relative bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+              <div className="relative h-80 md:h-96 w-full">
                 <Image
                   unoptimized
                   src={
@@ -162,12 +162,12 @@ export default function DealDetailPage({params}: any) {
                   }
                   alt={dealData?.parentDealId?.productName || dealData?.productName || 'Product'}
                   fill
-                  className="object-contain"
+                  className="object-contain p-4"
                 />
               </div>
 
               {slotsLeft > 0 && (
-                <div className="absolute top-2 right-2 bg-black bg-opacity-70 rounded-lg px-3 py-1">
+                <div className="absolute top-4 right-4 bg-gradient-to-r from-red-500 to-red-600 rounded-full px-4 py-2 shadow-lg">
                   <p className="text-white text-sm font-medium animate-pulse">
                     Hurry! {slotsLeft} slots left
                   </p>
@@ -176,16 +176,16 @@ export default function DealDetailPage({params}: any) {
             </div>
 
             {/* Product Details */}
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-              <h1 className="text-2xl font-bold text-gray-800 mb-4">
+            <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-8">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">
                 {dealData?.parentDealId?.productName || dealData?.productName}
               </h1>
 
-              <div className="space-y-3">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                 {/* Brand */}
                 {(dealData?.parentDealId?.brand?.name || dealData?.brand?.name) && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Brand</span>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <span className="text-gray-500 text-sm block mb-1">Brand</span>
                     <span className="text-gray-800 font-medium">
                       {dealData?.parentDealId?.brand?.name || dealData?.brand?.name}
                     </span>
@@ -194,8 +194,8 @@ export default function DealDetailPage({params}: any) {
 
                 {/* Deal Type */}
                 {(dealData?.parentDealId?.dealCategory?.name || dealData?.dealCategory?.name) && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Deal Type</span>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <span className="text-gray-500 text-sm block mb-1">Deal Type</span>
                     <span className="text-gray-800 font-medium">
                       {dealData?.parentDealId?.dealCategory?.name || dealData?.dealCategory?.name}
                     </span>
@@ -204,8 +204,8 @@ export default function DealDetailPage({params}: any) {
 
                 {/* Platform */}
                 {(dealData?.parentDealId?.platForm?.name || dealData?.platForm?.name) && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Platform</span>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <span className="text-gray-500 text-sm block mb-1">Platform</span>
                     <span className="text-gray-800 font-medium">
                       {dealData?.parentDealId?.platForm?.name || dealData?.platForm?.name}
                     </span>
@@ -214,9 +214,9 @@ export default function DealDetailPage({params}: any) {
 
                 {/* Product Price */}
                 {(dealData?.parentDealId?.actualPrice || dealData?.actualPrice) && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Product Price</span>
-                    <span className="text-red-600 font-medium">
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <span className="text-gray-500 text-sm block mb-1">Product Price</span>
+                    <span className="text-red-600 font-medium text-lg md:text-xl">
                       ₹{Number(dealData?.parentDealId?.actualPrice || dealData?.actualPrice).toFixed(0)}
                     </span>
                   </div>
@@ -224,9 +224,9 @@ export default function DealDetailPage({params}: any) {
 
                 {/* Less Amount */}
                 {(dealData?.parentDealId?.lessAmount || dealData?.lessAmount) && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Less Amount</span>
-                    <span className="text-gray-800 font-medium">
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <span className="text-gray-500 text-sm block mb-1">Less Amount</span>
+                    <span className="text-gray-800 font-medium text-lg md:text-xl">
                       ₹{Number(Number(dealData?.lessAmount) + Number(dealData?.adminCommission)).toFixed(0)}
                     </span>
                   </div>
@@ -234,9 +234,9 @@ export default function DealDetailPage({params}: any) {
 
                 {/* Commission Amount */}
                 {(Number(dealData?.finalCashBackForUser) > Number(dealData?.parentDealId?.actualPrice || dealData?.actualPrice)) && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Commission Amount</span>
-                    <span className="text-green-600 font-medium">
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <span className="text-gray-500 text-sm block mb-1">Commission Amount</span>
+                    <span className="text-green-600 font-medium text-lg md:text-xl">
                       ₹{Number(Number(dealData?.finalCashBackForUser) - Number(dealData?.parentDealId?.actualPrice || dealData?.actualPrice)).toFixed(0)}
                     </span>
                   </div>
@@ -244,9 +244,9 @@ export default function DealDetailPage({params}: any) {
 
                 {/* Return Amount */}
                 {dealData?.finalCashBackForUser && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Return Amount</span>
-                    <span className="text-green-600 font-medium">
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <span className="text-gray-500 text-sm block mb-1">Return Amount</span>
+                    <span className="text-green-600 font-medium text-lg md:text-xl">
                       ₹{Number(dealData?.finalCashBackForUser).toFixed(0)}
                     </span>
                   </div>
@@ -254,8 +254,8 @@ export default function DealDetailPage({params}: any) {
 
                 {/* Refund Period */}
                 {dealData?.createdAt && dealData?.refundDays && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Refund Period</span>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <span className="text-gray-500 text-sm block mb-1">Refund Period</span>
                     <span className="text-gray-800 font-medium">
                       {dealData?.refundDays} days
                     </span>
@@ -264,8 +264,8 @@ export default function DealDetailPage({params}: any) {
 
                 {/* Exchange Products */}
                 {!isEmpty(dealData?.parentDealId?.exchangeDealProducts || dealData?.exchangeDealProducts) && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Exchange Product</span>
+                  <div className="bg-gray-50 rounded-xl p-4 col-span-2 md:col-span-4">
+                    <span className="text-gray-500 text-sm block mb-1">Exchange Products</span>
                     <span className="text-gray-800 font-medium">
                       {((dealData?.parentDealId?.exchangeDealProducts || dealData?.exchangeDealProducts) || []).map((itm: string) => `${itm}, `)}
                     </span>
@@ -275,31 +275,47 @@ export default function DealDetailPage({params}: any) {
 
               {/* Terms and Conditions */}
               {(dealData?.parentDealId?.termsAndCondition || dealData?.termsAndCondition) && (
-                <div className="mt-6">
-                  <h2 className="text-lg font-semibold text-gray-800 mb-2">Deal Terms & Conditions</h2>
-                  <p className="text-gray-600 text-sm">
-                    {dealData?.parentDealId?.termsAndCondition || dealData?.termsAndCondition}
-                  </p>
+                <div className="mt-8">
+                  <h2 className="text-lg md:text-xl font-semibold text-gray-800 mb-4">Deal Terms & Conditions</h2>
+                  <div className="bg-gray-50 rounded-xl p-6">
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      {dealData?.parentDealId?.termsAndCondition || dealData?.termsAndCondition}
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
 
             {/* Action Buttons */}
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
               <button
                 onClick={() => window.open(dealData?.parentDealId?.postUrl || dealData?.postUrl, '_blank')}
-                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-medium 
-                  hover:from-blue-700 hover:to-indigo-700 transition-colors duration-200"
+                className="group w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-medium text-lg
+                  hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-[1.02] shadow-lg
+                  hover:shadow-xl relative overflow-hidden"
               >
-                Get This Deal
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative flex items-center justify-center gap-2">
+                  <span>Get This Deal</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </div>
               </button>
 
               <Link
                 href={`/orderForm`}
-                className="block w-full bg-gradient-to-r from-green-600 to-teal-600 text-white py-3 rounded-lg font-medium text-center
-                  hover:from-green-700 hover:to-teal-700 transition-colors duration-200"
+                className="group block w-full bg-gradient-to-r from-green-600 to-teal-600 text-white py-4 rounded-xl font-medium text-lg text-center
+                  hover:from-green-700 hover:to-teal-700 transition-all duration-300 transform hover:scale-[1.02] shadow-lg
+                  hover:shadow-xl relative overflow-hidden"
               >
-                Fill Order Form
+                <div className="absolute inset-0 bg-gradient-to-r from-green-700 to-teal-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative flex items-center justify-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  <span>Fill Order Form</span>
+                </div>
               </Link>
             </div>
           </FadeInSection>
