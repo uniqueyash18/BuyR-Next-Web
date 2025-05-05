@@ -15,7 +15,6 @@ import requestNotificationPermission from '@/utils/firebase';
 const Signup = () => {
   const router = useRouter();
   const { login } = useAuth();
-  const [activeTab, setActiveTab] = useState('phone');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -60,23 +59,22 @@ const Signup = () => {
       isValid = false;
     }
 
-    if (activeTab === 'phone') {
-      if (!phoneNumber) {
-        newErrors.phoneNumber = 'Phone number is required';
-        isValid = false;
-      } else if (phoneNumber.length < 10) {
-        newErrors.phoneNumber = 'Phone number must be at least 10 digits';
-        isValid = false;
-      }
-    } else {
-      if (!email) {
-        newErrors.email = 'Email is required';
-        isValid = false;
-      } else if (!/\S+@\S+\.\S+/.test(email)) {
-        newErrors.email = 'Please enter a valid email address';
-        isValid = false;
-      }
+    if (!phoneNumber) {
+      newErrors.phoneNumber = 'Phone number is required';
+      isValid = false;
+    } else if (phoneNumber.length < 10) {
+      newErrors.phoneNumber = 'Phone number must be at least 10 digits';
+      isValid = false;
     }
+
+    if (!email) {
+      newErrors.email = 'Email is required';
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'Please enter a valid email address';
+      isValid = false;
+    }
+
     if (!password) {
       newErrors.password = 'Password is required';
       isValid = false;
@@ -106,7 +104,8 @@ const Signup = () => {
     requestNotificationPermission().then((token) => {
       signup({
         name,
-        ...(activeTab === 'phone' ? { phoneNumber } : { email }),
+        phoneNumber,
+        email,
         password,
         currentAdminReference: referenceId,
         fcmToken: token,
@@ -114,7 +113,8 @@ const Signup = () => {
     }).catch((error) => {
       signup({
         name,
-        ...(activeTab === 'phone' ? { phoneNumber } : { email }),
+        phoneNumber,
+        email,
         password,
         currentAdminReference: referenceId,
       });
@@ -128,21 +128,6 @@ const Signup = () => {
           <Image src="/images/logo.png" alt="BuyR Logo" width={90} height={90} className="mb-2 rounded-lg" priority />
           <TextContainer text="Create Account" style={styles.logintxt} />
           <TextContainer text="Sign up to get started" style={styles.welcomeBack} />
-        </div>
-
-        <div className="flex justify-center gap-2 mb-6">
-          <button
-            className={`px-4 py-2 rounded-full font-semibold transition-colors duration-200 ${activeTab === 'phone' ? 'bg-orange-500 text-white shadow' : 'bg-gray-100 text-gray-700'}`}
-            onClick={() => setActiveTab('phone')}
-          >
-            Phone
-          </button>
-          <button
-            className={`px-4 py-2 rounded-full font-semibold transition-colors duration-200 ${activeTab === 'email' ? 'bg-orange-500 text-white shadow' : 'bg-gray-100 text-gray-700'}`}
-            onClick={() => setActiveTab('email')}
-          >
-            Email
-          </button>
         </div>
 
         <div className="space-y-4">
@@ -159,32 +144,30 @@ const Signup = () => {
             )}
           </div>
 
-          {activeTab === 'phone' ? (
-            <div>
-              <PhoneNumberInput
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-                maxLength={10}
-                placeholder="Enter phone number"
-              />
-              {errors.phoneNumber && (
-                <p className="mt-1 text-sm text-red-600">{errors.phoneNumber}</p>
-              )}
-            </div>
-          ) : (
-            <div>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 text-black placeholder:text-gray-500"
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-              )}
-            </div>
-          )}
+          <div>
+            <PhoneNumberInput
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+              maxLength={10}
+              placeholder="Enter phone number"
+            />
+            {errors.phoneNumber && (
+              <p className="mt-1 text-sm text-red-600">{errors.phoneNumber}</p>
+            )}
+          </div>
+
+          <div>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 text-black placeholder:text-gray-500"
+            />
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+            )}
+          </div>
 
           <div className="relative">
             <input
