@@ -61,6 +61,7 @@ export default function NotificationsPage() {
                     currentPage: data?.data?.length >= 10 ? currentPage + 1 : 0,
                     loadMore: !data?.data || data?.data.length < 10 ? false : true,
                     loadMoreLoading: false,
+                    isRefreshing: false
                 });
             },
             onError: async (error: any) => {
