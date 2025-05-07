@@ -32,9 +32,9 @@ export default function ForgotPasswordPage() {
       setIsEmailAdded(true);
       showSuccess(data?.message || 'OTP sent successfully');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       setIsLoading(false);
-      showError(error.message || 'Failed to send OTP');
+      showError(error?.response?.data?.message || 'Failed to send OTP');
     },
   });
 
@@ -44,9 +44,9 @@ export default function ForgotPasswordPage() {
       showSuccess('Password reset successful');
       router.push('/auth/login');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       setIsLoading(false);
-      showError(error.message || 'Failed to verify OTP');
+      showError(error?.response?.data?.message || error?.message || 'Failed to verify OTP');
     },
   });
 
