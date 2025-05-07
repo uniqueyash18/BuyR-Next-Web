@@ -261,7 +261,7 @@ export default function ForgotPasswordPage() {
         <div className="text-center">
           <span className="text-gray-600">Remember your password? </span>
           <button
-            onClick={() => router.push('/login')}
+            onClick={() => router.push('/auth/login')}
             className="text-indigo-600 font-medium"
           >
             Login
