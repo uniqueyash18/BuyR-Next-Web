@@ -8,6 +8,7 @@ import { FadeInSection, AnimatedGrid } from "@/components/transitions";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/redux/store";
 import { onLogOut } from "@/redux/actions/auth";
+import usePostData from "@/hooks/usePostData";
 
 // Define the account list item type
 interface AccountListItem {
@@ -22,22 +23,30 @@ export default function AccountPage() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const [isLoading, setIsLoading] = useState(false);
-  
+
   // Get user data from Redux store
   const userData = useSelector((state: RootState) => state.user.user) || {
     name: "John Doe",
     email: "john@example.com",
-    avatar: "/images/avatar-placeholder.svg"
+    avatar: "/images/avatar-placeholder.svg",
   };
+
+  const { mutate: logoutMutate } = usePostData("/user/logout", {
+    onSuccess: async () => {
+      dispatch(onLogOut());
+      router.push("/auth/login");
+    },
+    onError: async () => {
+      setIsLoading(false);
+    },
+  });
 
   // Mock logout function - replace with actual API call
   const handleLogout = async () => {
     setIsLoading(true);
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      dispatch(onLogOut());
-      router.push("/auth/login");
+      logoutMutate({});
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
@@ -52,7 +61,7 @@ export default function AccountPage() {
       title: "My Profile",
       onPress: () => router.push("/profile"),
       leftIcon: "/images/profile.svg",
-      topTitle: "My Account"
+      topTitle: "My Account",
     },
     {
       id: 2,
@@ -65,7 +74,7 @@ export default function AccountPage() {
       title: "Contact Us",
       onPress: () => router.push("/contact"),
       leftIcon: "/images/contact.svg",
-      topTitle: "General"
+      topTitle: "General",
     },
     {
       id: 4,
@@ -132,9 +141,16 @@ export default function AccountPage() {
               />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">{userData?.name}</h2>
+              <h2 className="text-xl font-semibold text-gray-800">
+                {userData?.name}
+              </h2>
               <p className="text-gray-500">{userData?.email}</p>
-              <p className="text-gray-500">Med Id: <span className="font-bold">{userData?.currentAdminReference?.userName}</span></p>
+              <p className="text-gray-500">
+                Med Id:{" "}
+                <span className="font-bold">
+                  {userData?.currentAdminReference?.userName}
+                </span>
+              </p>
             </div>
           </div>
         </FadeInSection>
@@ -146,7 +162,9 @@ export default function AccountPage() {
               <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                 {group !== "Other" && (
                   <div className="px-6 py-3 bg-gray-50 border-b border-gray-100">
-                    <h3 className="text-sm font-medium text-gray-500">{group}</h3>
+                    <h3 className="text-sm font-medium text-gray-500">
+                      {group}
+                    </h3>
                   </div>
                 )}
                 <div className="divide-y divide-gray-100">
@@ -164,7 +182,9 @@ export default function AccountPage() {
                           className="object-contain"
                         />
                       </div>
-                      <span className="text-gray-700 font-medium">{item.title}</span>
+                      <span className="text-gray-700 font-medium">
+                        {item.title}
+                      </span>
                       <div className="ml-auto">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
