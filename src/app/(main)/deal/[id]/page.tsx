@@ -90,9 +90,9 @@ export default function DealDetailPage({params}: any) {
 
   // Handle back navigation
   const handleBack = () => {
-    if (window.history.length > 2) {
+    try {
       router.back();
-    } else {
+    } catch (error) {
       router.push('/');
     }
   };
