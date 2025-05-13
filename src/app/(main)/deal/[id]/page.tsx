@@ -90,7 +90,11 @@ export default function DealDetailPage({params}: any) {
 
   // Handle back navigation
   const handleBack = () => {
-    router.back();
+    if (window.history.length > 2) {
+      router.back();
+    } else {
+      router.push('/');
+    }
   };
 
   // Share product link
