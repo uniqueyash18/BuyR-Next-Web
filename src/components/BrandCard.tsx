@@ -56,7 +56,7 @@ export default function BrandCard({ item, index }: BrandCardProps) {
         )}
       </div>
       <div className="p-3">
-        <h3 className="text-lg font-bold text-black">{item.name}</h3>
+        <h3 className="text-lg font-bold text-black">{item?.name}</h3>
       </div>
     </motion.div>
   );
