@@ -8,6 +8,7 @@ const nextConfig = {
       "images-eu.ssl-images-amazon.com",
       "images-na.ssl-images-amazon.com",
       "encrypted-tbn0.gstatic.com",
+      "bucket.buyrapp.in"
     ],
   },
 };
