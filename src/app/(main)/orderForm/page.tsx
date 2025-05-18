@@ -82,9 +82,6 @@ interface FormValues {
   brandName: any;
   categoryName: any;
   productName: any[];
-  deliveryFee: string;
-  price: string;
-  finalCashBackForUser: string;
 }
 
 export default function OrderFormPage() {
@@ -245,9 +242,6 @@ export default function OrderFormPage() {
     orderId: Yup.string().required('Order ID is required'),
     orderDate: Yup.date().required('Order Date is required'),
     orderScreenShot: Yup.string().required('Order Screenshot is required'),
-    price: Yup.number().required('Price is required'),
-    finalCashBackForUser: Yup.number().required('Refund is required'),
-    deliveryFee: Yup.number().optional()
   });
 
   // Initial form values
@@ -260,24 +254,26 @@ export default function OrderFormPage() {
     brandName: "",
     categoryName: "",
     productName: [],
-    deliveryFee: "",
-    price: "",
-    finalCashBackForUser: "",
   };
 
   // Handle form submission
   const handleSubmit = (values: { [key: string]: any }) => {
+    const dealDetails = values?.productName.map((item: any) => ({
+      dealId: item?.id,
+      price: item?.customPrice || item?.price,
+      deliveryFee: item?.customDeliveryFee || 0
+    }));
 
     createOrder({
       dealIds: values?.productName.map((item: any) => {
         return item?.id;
       }),
+      deals:dealDetails,
       reviewerName: values?.profileName,
       orderIdOfPlatForm: values?.orderId,
       orderScreenShot: values?.orderScreenShot,
       exchangeDealProducts: !!selectedExchange ? [selectedExchange] : [],
       orderDate: dayjs(values?.orderDate).format('YYYY-MM-DD'),
-      deliveryFee: values?.deliveryFee.toString()
     });
   };
 
@@ -470,28 +466,21 @@ export default function OrderFormPage() {
       options: dealOptions,
       disabled: isEmpty(selectedDealCategory),
       subHeading: 'Hold Ctrl/Cmd to select multiple products',
-    },
-    {
-      name: 'deliveryFee',
-      label: 'Delivery Fee (in ₹)',
-      type: 'numeric',
-      placeholder: 'Enter delivery fee',
-      disabled: false,
-    },
-    {
-      name: 'price',
-      label: 'Price (in ₹)',
-      type: 'text',
-      disabled: true,
-      initialValue: '',
-    },
-    {
-      name: 'finalCashBackForUser',
-      label: 'Refund Amount (in ₹)',
-      type: 'text',
-      initialValue:  '',
-      disabled: true,
-    },
+      customFields: [
+        {
+          name: 'customPrice',
+          label: 'Price (in ₹)',
+          type: 'numeric',
+          placeholder: 'Enter price',
+        },
+        {
+          name: 'customDeliveryFee',
+          label: 'Delivery Fee (in ₹)',
+          type: 'numeric',
+          placeholder: 'Enter delivery fee',
+        }
+      ]
+    }
   ];
 
   return (

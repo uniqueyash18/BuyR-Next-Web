@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { isEmpty } from 'lodash';
 import { useGenericQuery } from '@/hooks/useQuery';
 import { FadeInSection } from '@/components/transitions';
-import { showError } from '@/utils/helperFunctions';
+import { showError, handleShare, copyDealClipboard } from '@/utils/helperFunctions';
 
 interface DealData {
   _id: string;
@@ -66,14 +66,14 @@ interface ApiResponse {
 }
 
 // For client components in Next.js App Router, we need to use React.use() to unwrap params
-export default function DealDetailPage({params}: any) {
+export default function DealDetailPage({ params }: any) {
   const router = useRouter();
   const [dealData, setDealData] = useState<DealData | null>(null);
-  
+
   // Unwrap the params Promise using React.use()
   const unwrappedParams = React.use(params) as { id: string };
   const { id } = unwrappedParams;
-  
+
   // Fetch deal data using custom useQuery hook
   const { data, isLoading, error, refetch } = useGenericQuery<ApiResponse>(
     ['dealDetail', id],
@@ -95,17 +95,7 @@ export default function DealDetailPage({params}: any) {
 
   // Share product link
   const shareProductLink = (id: string) => {
-    if (navigator.share) {
-      navigator.share({
-        title: 'Check out this deal',
-        url: window.location.href,
-      });
-    } else {
-      // Fallback for browsers that don't support Web Share API
-      const url = window.location.href;
-      navigator.clipboard.writeText(url);
-      alert('Link copied to clipboard!');
-    }
+    handleShare(id);
   };
 
   // Calculate slots left
@@ -118,7 +108,7 @@ export default function DealDetailPage({params}: any) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
-      <div className="bg-white shadow-sm sticky top-0 z-10">
+      <div className="bg-white shadow-sm sticky mt-4 top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <button
             onClick={handleBack}
@@ -130,14 +120,24 @@ export default function DealDetailPage({params}: any) {
             Back
           </button>
           <h1 className="text-xl font-bold text-gray-800">Deal Details</h1>
-          <button
-            onClick={() => shareProductLink(dealData?._id || '')}
-            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => shareProductLink(dealData?._id || '')}
+              className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+            </button>
+            <button
+              onClick={() => copyDealClipboard(dealData?._id || '')}
+              className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200 ml-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 

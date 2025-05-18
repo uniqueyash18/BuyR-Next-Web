@@ -42,6 +42,8 @@ interface Order {
   image?: string;
   name?: string;
   productName?: string;
+  orderPrice?: number;
+  lessAmount?: number;
 }
 
 // Define filter types
@@ -181,7 +183,7 @@ export default function OrdersPage() {
         {/* Header */}
         <FadeInSection delay={0.1}>
           <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-            <h1 className="text-2xl font-semibold text-gray-800">My Deal Orders</h1>
+            <h1 className="text-2xl font-semibold text-gray-800">My Orders</h1>
           </div>
         </FadeInSection>
 
@@ -273,10 +275,10 @@ export default function OrdersPage() {
 
                       <div className="flex flex-col md:flex-row justify-between mb-2">
                         <div className="text-gray-600">
-                          Price: ₹{order.dealId?.parentDealId?.actualPrice || order.dealId?.actualPrice}
+                          Price: ₹{order?.orderPrice|| order.dealId?.parentDealId?.actualPrice || order.dealId?.actualPrice}
                         </div>
                         <div className="text-gray-600">
-                          Refund: ₹{order.dealId?.finalCashBackForUser}
+                          Refund: ₹{ order?.orderPrice && order?.lessAmount ? Number(order?.orderPrice) - Number(order?.lessAmount) :  order.dealId?.finalCashBackForUser}
                         </div>
                       </div>
 

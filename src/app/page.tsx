@@ -47,7 +47,13 @@ export default function HomePage() {
             </motion.div>
             
             {/* Mobile menu button */}
-            <div className="md:hidden">
+            <div className="md:hidden flex items-center gap-4">
+            <Link
+                href="/auth/login"
+                className="text-blue-600 font-medium hover:text-blue-700 transition-colors"
+              >
+                Login
+              </Link>
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="text-gray-600 hover:text-blue-600 focus:outline-none"
@@ -118,7 +124,6 @@ export default function HomePage() {
                   { label: "How It Works", link: "#how-it-works" },
                   { label: "Download", link: process.env.NEXT_PUBLIC_API_URL + "buyr.apk" },
                   { label: "Tutorials", link: "/tutorial" },
-                  { label: "Login", link: "/auth/login" },
                 ].map((item, index) => (
                   <Link
                     key={index}

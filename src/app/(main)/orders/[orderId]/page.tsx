@@ -88,6 +88,8 @@ interface OrderData {
   sellerFeedback?: string;
   finalCashBackForUser?: string;
   reviewLink?:string
+  orderPrice?: number;
+  lessAmount?: number;
 }
 
 interface ApiResponse {
@@ -345,10 +347,10 @@ export default function OrderDetailPage({ params }: any) {
 
             <div className="space-y-3">
               {/* Price */}
-              {(orderData?.dealId?.parentDealId?.actualPrice || orderData?.dealId?.actualPrice) && (
+              {(orderData?.orderPrice || orderData?.dealId?.parentDealId?.actualPrice || orderData?.dealId?.actualPrice) && (
                 <div className="flex justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Price (MRP of Product)</span>
-                  <span className="font-medium text-red-500">₹{Number(orderData?.dealId?.parentDealId?.actualPrice || orderData?.dealId?.actualPrice).toFixed(0)}</span>
+                  <span className="font-medium text-red-500">₹{Number(orderData?.orderPrice || orderData?.dealId?.parentDealId?.actualPrice || orderData?.dealId?.actualPrice).toFixed(0)}</span>
                 </div>
               )}
 
@@ -361,10 +363,10 @@ export default function OrderDetailPage({ params }: any) {
               )}
 
               {/* Return Amount */}
-              {orderData?.dealId?.finalCashBackForUser && (
+              {orderData?.orderPrice && orderData?.lessAmount && (
                 <div className="flex justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Return Amount</span>
-                  <span className="font-medium text-green-500">₹{Number(orderData?.dealId?.finalCashBackForUser).toFixed(0)}</span>
+                  <span className="font-medium text-green-500">₹{Number(orderData?.orderPrice - orderData?.lessAmount).toFixed(0)}</span>
                 </div>
               )}
 
