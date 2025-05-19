@@ -8,7 +8,7 @@ interface CustomSelectProps {
   field: FormField;
   value: any;
   onChange: (value: any) => void;
-  error?: string;
+  error?: string | any[];
   onDropdownOpen?: (isOpen: boolean) => void;
 }
 
@@ -25,6 +25,13 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
 
   // Ensure value is always an array for multiselect
   const selectedValues = isMulti ? (Array.isArray(value) ? value : []) : value;
+
+  // Get error for a specific item's custom field
+  const getCustomFieldError = (index: number, fieldName: string) => {
+    if (!error || !Array.isArray(error)) return undefined;
+    const itemError = error[index];
+    return itemError?.[fieldName];
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -114,7 +121,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       {isMulti ? (
         <div ref={dropdownRef} className="relative">
           <div className="space-y-2">
-            {selectedValues.map((item: any) => (
+            {selectedValues.map((item: any, index: number) => (
               <div key={item.id} className="border border-gray-300 rounded-lg p-3">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm font-medium text-gray-900">{item.label}</span>
@@ -138,8 +145,13 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                       value={item[customField.name] || ''}
                       onChange={(e) => handleCustomFieldChange(item.id, customField.name, e.target.value)}
                       placeholder={customField.placeholder}
-                      className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className={`w-full px-3 py-1.5 text-sm border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        getCustomFieldError(index, customField.name) ? 'border-red-500' : 'border-gray-300'
+                      }`}
                     />
+                    {getCustomFieldError(index, customField.name) && (
+                      <p className="text-red-500 text-sm mt-1">{getCustomFieldError(index, customField.name)}</p>
+                    )}
                   </div>
                 ))}
               </div>
@@ -228,7 +240,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           )}
         </div>
       )}
-      {error && (
+      {!Array.isArray(error) && error && (
         <p className="text-red-500 text-sm mt-1">{error}</p>
       )}
     </div>

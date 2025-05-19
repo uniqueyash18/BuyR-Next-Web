@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import CustomForm from "@/components/CustomForm/CustomForm";
+import { Field } from "@/components/CustomForm/types";
 import { FadeInSection } from "@/components/transitions";
 import usePostData from "@/hooks/usePostData";
 import { useGenericQuery } from "@/hooks/useQuery";
@@ -9,10 +9,9 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { isEmpty } from "lodash";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import * as Yup from "yup";
-import Image from "next/image";
-import CustomForm from "@/components/CustomForm/CustomForm";
-import { Field } from "@/components/CustomForm/types";
 
 // Extend dayjs with plugins
 dayjs.extend(utc);
@@ -28,6 +27,8 @@ const FILE_UPLOAD = "/fileUpload";
 // Define interfaces
 interface Deal {
   _id: string;
+  id?: string;
+  value?: string;
   productName?: string;
   actualPrice?: number;
   finalCashBackForUser?: number;
@@ -72,6 +73,21 @@ interface Category {
   name: string;
 }
 
+interface CustomField {
+  name: string;
+  label: string;
+  type: 'text' | 'numeric';
+  placeholder: string;
+  required?: boolean;
+  validation?: {
+    required?: string;
+    min?: {
+      value: number;
+      message: string;
+    };
+  };
+}
+
 interface FormValues {
   profileName: string;
   orderId: string;
@@ -82,6 +98,7 @@ interface FormValues {
   brandName: any;
   categoryName: any;
   productName: any[];
+  commonDeliveryFee: string;
 }
 
 export default function OrderFormPage() {
@@ -96,9 +113,10 @@ export default function OrderFormPage() {
     newDeals: [] as Deal[],
     selectedDealCategory: {} as any,
     selectedExchange: "",
+    isLoading: false,
   });
 
-  const { brandData, allBrandDeals, selectedDeal, selectedPlatform, allCategories, newDeals, selectedDealCategory, selectedExchange } = state;
+  const { brandData, allBrandDeals, selectedDeal, selectedPlatform, allCategories, newDeals, selectedDealCategory, selectedExchange, isLoading } = state;
 
   const updateState = (data: any) => setState(state => ({ ...state, ...data }));
 
@@ -113,10 +131,12 @@ export default function OrderFormPage() {
     onSuccess: async ({ data }: any) => {
       updateState({
         brandData: data || [],
+        isLoading: false,
       });
     },
     onError: async (error: any) => {
       console.error("Error fetching brands:", error);
+      updateState({ isLoading: false });
     },
   });
 
@@ -130,7 +150,7 @@ export default function OrderFormPage() {
       });
 
       if (isEmpty(filteredDeals)) {
-        updateState({ allBrandDeals: [] });
+        updateState({ allBrandDeals: [], isLoading: false });
         console.error("No products available");
         return;
       }
@@ -146,10 +166,12 @@ export default function OrderFormPage() {
       updateState({
         allBrandDeals: filteredDeals,
         allCategories: uniqueCategories,
+        isLoading: false,
       });
     },
     onError: async (error: any) => {
       console.error("Error fetching deals:", error);
+      updateState({ isLoading: false });
     },
   });
 
@@ -162,6 +184,7 @@ export default function OrderFormPage() {
         allBrandDeals: [],
         selectedDeal: [],
         selectedPlatform: {},
+        isLoading: false,
       });
 
       // Show success message
@@ -174,6 +197,7 @@ export default function OrderFormPage() {
     },
     onError: async (error: any) => {
       console.error("Error creating order:", error);
+      updateState({ isLoading: false });
       alert(error?.response?.data?.message || "Failed to create order");
     },
   });
@@ -236,66 +260,6 @@ export default function OrderFormPage() {
     id: cat?._id
   })) || [];
 
-  // Validation schema
-  const validationSchema = Yup.object().shape({
-    profileName: Yup.string().required('Name is required'),
-    orderId: Yup.string().required('Order ID is required'),
-    orderDate: Yup.date().required('Order Date is required'),
-    orderScreenShot: Yup.string().required('Order Screenshot is required'),
-  });
-
-  // Initial form values
-  const initialValues: FormValues = {
-    profileName: "",
-    orderId: "",
-    orderDate: new Date(),
-    orderScreenShot: "",
-    platformOptions: "",
-    brandName: "",
-    categoryName: "",
-    productName: [],
-  };
-
-  // Handle form submission
-  const handleSubmit = (values: { [key: string]: any }) => {
-    const dealDetails = values?.productName.map((item: any) => ({
-      dealId: item?.id,
-      price: item?.customPrice || item?.price,
-      deliveryFee: item?.customDeliveryFee || 0
-    }));
-
-    createOrder({
-      dealIds: values?.productName.map((item: any) => {
-        return item?.id;
-      }),
-      deals:dealDetails,
-      reviewerName: values?.profileName,
-      orderIdOfPlatForm: values?.orderId,
-      orderScreenShot: values?.orderScreenShot,
-      exchangeDealProducts: !!selectedExchange ? [selectedExchange] : [],
-      orderDate: dayjs(values?.orderDate).format('YYYY-MM-DD'),
-    });
-  };
-
-  // Check if platform is selected
-  const checkPlatformSelected = (isopen: boolean, value: string) => {
-    if (
-      !isopen &&
-      (value === 'brandName' || value === 'productName' || value === 'categoryName') &&
-      isEmpty(selectedPlatform)
-    ) {
-      alert('Please select a platform first');
-      return false;
-    }
-
-    if (!isopen && value === 'productName' && isEmpty(selectedDealCategory)) {
-      alert('Please select deal category first');
-      return false;
-    }
-
-    return true;
-  };
-
   // Handle field changes
   const handleFieldChange = (
     field: string,
@@ -313,7 +277,7 @@ export default function OrderFormPage() {
         updateState({ newDeals: [], brandOptions: [], allCategories: [], allBrandDeals: [], selectedDealCategory: {}, selectedExchange: '' });
         return true;
       } else {
-        updateState({ selectedPlatform: value });
+        updateState({ selectedPlatform: value, isLoading: true });
         getallBrands({ search: '', offset: 0, limit: 2000 });
         setFieldValue('productName', []);
         setFieldValue('brandName', '');
@@ -325,7 +289,7 @@ export default function OrderFormPage() {
     if (field === 'brandName') {
       setFieldValue('productName', []);
       setFieldValue('categoryName', '');
-      updateState({ newDeals: [], allCategories: [], selectedDealCategory: {}, selectedExchange: '' });
+      updateState({ newDeals: [], allCategories: [], selectedDealCategory: {}, selectedExchange: '', isLoading: true });
       getDealsByBrand({
         type: 'brand',
         id: value?.id,
@@ -349,63 +313,50 @@ export default function OrderFormPage() {
     }
   };
 
+  // Handle form submission
+  const handleSubmit = (values: { [key: string]: any }) => {
+    updateState({ isLoading: true });
+    const dealDetails = values?.productName.map((item: any) => ({
+      dealId: item?.id,
+      price: item?.customPrice || item?.price,
+    }));
+
+    createOrder({
+      dealIds: values?.productName.map((item: any) => {
+        return item?.id;
+      }),
+      deals: dealDetails,
+      reviewerName: values?.profileName,
+      orderIdOfPlatForm: values?.orderId,
+      orderScreenShot: values?.orderScreenShot,
+      exchangeDealProducts: !!selectedExchange ? [selectedExchange] : [],
+      orderDate: dayjs(values?.orderDate).format('YYYY-MM-DD'),
+      deliveryFee: values?.commonDeliveryFee || ""
+    });
+  };
+
+  // Check if platform is selected
+  const checkPlatformSelected = (isopen: boolean, value: string) => {
+    if (
+      !isopen &&
+      (value === 'brandName' || value === 'productName' || value === 'categoryName') &&
+      isEmpty(selectedPlatform)
+    ) {
+      alert('Please select a platform first');
+      return false;
+    }
+
+    if (!isopen && value === 'productName' && isEmpty(selectedDealCategory)) {
+      alert('Please select deal category first');
+      return false;
+    }
+
+    return true;
+  };
+
   // Handle exchange product selection
   const handleExchangeCheck = (item: string) => {
     updateState({ selectedExchange: item });
-  };
-
-  // Handle image upload
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, setFieldValue: (field: string, value: any) => void) => {
-    const file = e.target.files?.[0];
-    if (!file) {
-      alert('Please select an image first');
-      return;
-    }
-
-    if (file.size > 4 * 1024 * 1024) {
-      alert('Image must be below 4MB');
-      return;
-    }
-
-    if (!file.type.match(/^image\/(jpeg|png)$/)) {
-      alert('Image must be in jpg/png format');
-      return;
-    }
-
-    // Show preview immediately
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFieldValue('orderScreenShot', reader.result);
-    };
-    reader.readAsDataURL(file);
-
-    // Upload the image
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      const response = await fetch(FILE_UPLOAD, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        console.log('Image uploaded successfully:', data);
-        // Store the uploaded image URL
-        setFieldValue('orderScreenShotUrl', data.url || data.data?.url);
-      } else {
-        console.error('Upload failed:', data.message);
-        alert(data.message || 'Failed to upload image');
-      }
-    } catch (error: any) {
-      console.error('Upload error:', error);
-      alert(error?.message || 'An error occurred during upload');
-    }
   };
 
   // Define form fields for CustomForm
@@ -472,16 +423,40 @@ export default function OrderFormPage() {
           label: 'Price (in ₹)',
           type: 'numeric',
           placeholder: 'Enter price',
-        },
-        {
-          name: 'customDeliveryFee',
-          label: 'Delivery Fee (in ₹)',
-          type: 'numeric',
-          placeholder: 'Enter delivery fee',
         }
       ]
+    },
+    {
+      name: 'commonDeliveryFee',
+      label: 'Delivery Fee (in ₹)',
+      type: 'numeric',
+      placeholder: 'Enter delivery fee',
+      disabled: isEmpty(selectedDeal),
+      subHeading: 'Common delivery fee for all selected products',
     }
   ];
+
+  // Validation schema
+  const validationSchema = Yup.object().shape({
+    profileName: Yup.string().required('Name is required'),
+    orderId: Yup.string().required('Order ID is required'),
+    orderDate: Yup.date().required('Order Date is required'),
+    orderScreenShot: Yup.string().required('Order Screenshot is required'),
+    productName: Yup.array()
+      .min(1, 'At least one product must be selected')
+      .required('Product is required')
+      .of(
+        Yup.object().shape({
+          id: Yup.string().required(),
+          label: Yup.string().required(),
+          value: Yup.string().required(),
+          customPrice: Yup.number()
+            .required('Price is required')
+            .min(0, 'Price must be greater than or equal to 0'),
+        })
+      ),
+    commonDeliveryFee: Yup.string().optional(),
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-4 pb-16">
@@ -492,6 +467,14 @@ export default function OrderFormPage() {
             <p className="text-gray-600 mb-6">
               Fill out the form below to submit your order details.
             </p>
+
+            {(isLoading || isPlatformLoading) && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="bg-white p-4 rounded-lg shadow-lg">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                </div>
+              </div>
+            )}
 
             <CustomForm
               fields={formFields}

@@ -35,7 +35,11 @@ const CustomForm: React.FC<CustomFormProps> = ({
     }, 0);
   };
   const initialValues = fields.reduce((acc, field) => {
-    acc[field.name] = field.initialValue || '';
+    if (field.type === 'multiselect') {
+      acc[field.name] = [];
+    } else {
+      acc[field.name] = field.initialValue || '';
+    }
     return acc;
   }, {} as { [key: string]: any });
 
@@ -54,15 +58,25 @@ const CustomForm: React.FC<CustomFormProps> = ({
       }
     }
 
-    if (fieldName === 'productName') {
-      let priceValue = sumPrices(value, 'price');
-      let cashBackValue = sumPrices(value, 'cashback');
+    const field = fields.find(f => f.name === fieldName);
+    if (field?.type === 'multiselect') {
+      // Ensure value is always an array for multiselect
+      const newValue = Array.isArray(value) ? value : [];
+      setFieldValue(fieldName, newValue);
+      
+      // Calculate sums for price and cashback
+      let priceValue = sumPrices(newValue, 'price');
+      let cashBackValue = sumPrices(newValue, 'cashback');
       setFieldValue('price', !!priceValue ? priceValue.toString() : '');
       setFieldValue('finalCashBackForUser', !!cashBackValue ? cashBackValue.toString() : '');
-    } else if (fieldName === 'brandName') {
+      return;
+    }
+
+    if (fieldName === 'brandName') {
       setFieldValue('price', '');
       setFieldValue('finalCashBackForUser', '');
     }
+
     if (
       ((fieldName === 'deliveredScreenshot') ||
       (fieldName === 'reviewScreenshot') ||
