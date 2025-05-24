@@ -3,6 +3,12 @@
 import React from 'react';
 
 interface Transaction {
+  isCommissionDeal: boolean;
+  orderPrice: number;
+  commissionValue: number;
+  deliveryFee: number;
+  adminCommission: number;
+  lessAmount: number;
   orderIdOfPlatForm: string;
   dealId: {
     parentDealId?: {
@@ -61,7 +67,7 @@ const TransactionCard: React.FC<TransactionCardProps> = ({ transaction, onClick 
           {productName}
         </h3>
         <p className="text-sm text-gray-600">
-          Return Amount: ₹{Number(dealId?.finalCashBackForUser).toFixed(2)}
+          Return Amount: ₹{transaction?.isCommissionDeal ? (Number(transaction?.orderPrice ) + Number(transaction?.commissionValue || 0) + Number(transaction?.deliveryFee || 0) - Number(transaction?.adminCommission || 0)) : (Number(transaction?.orderPrice) - Number(transaction?.lessAmount) + Number(transaction?.deliveryFee || 0) - Number(transaction?.adminCommission || 0)).toFixed(0)}
         </p>
       </div>
       

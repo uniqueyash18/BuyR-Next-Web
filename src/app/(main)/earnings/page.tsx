@@ -16,7 +16,7 @@ interface NavigationItem {
 }
 
 interface UserEarningResponse {
-  totalCashback: number;
+  totalAmount: number;
   message: string;
   status: number;
 }
@@ -35,7 +35,7 @@ export default function EarningsPage() {
   useEffect(() => {
     if (!isEmpty(data)) {
       console.log(data,'datadata')
-      setState({ totalEaring: data?.totalCashback || 0 });
+      setState({ totalEaring: data?.totalAmount || 0 });
     }
   }, [data]);
 

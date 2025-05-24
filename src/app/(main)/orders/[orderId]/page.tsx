@@ -90,6 +90,10 @@ interface OrderData {
   reviewLink?:string
   orderPrice?: number;
   lessAmount?: number;
+  deliveryFee?: number;
+  commissionValue?: number;
+  isCommissionDeal?: boolean;
+  adminCommission?: number;
 }
 
 interface ApiResponse {
@@ -269,7 +273,7 @@ export default function OrderDetailPage({ params }: any) {
               <div className="flex justify-between items-center">
                 <div>
                   <p className="text-sm text-gray-500">Return Amount</p>
-                  <p className="text-xl font-bold text-green-600">₹{Number(orderData?.dealId?.finalCashBackForUser || 0).toFixed(2)}</p>
+                  <p className="text-xl font-bold text-green-600">₹{orderData?.isCommissionDeal ? Number(orderData?.orderPrice) +  Number(orderData?.commissionValue) + Number(orderData?.deliveryFee || 0) - Number(orderData?.adminCommission || 0) : Number(orderData?.orderPrice) - Number(orderData?.lessAmount) + Number(orderData?.deliveryFee || 0) - Number(orderData?.adminCommission || 0)}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-500">Order ID</p>
@@ -350,25 +354,31 @@ export default function OrderDetailPage({ params }: any) {
               {(orderData?.orderPrice || orderData?.dealId?.parentDealId?.actualPrice || orderData?.dealId?.actualPrice) && (
                 <div className="flex justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Price (MRP of Product)</span>
-                  <span className="font-medium text-red-500">₹{Number(orderData?.orderPrice || orderData?.dealId?.parentDealId?.actualPrice || orderData?.dealId?.actualPrice).toFixed(0)}</span>
+                  <span className="font-medium text-red-500">
+                    ₹{Number(orderData?.orderPrice || orderData?.dealId?.parentDealId?.actualPrice || orderData?.dealId?.actualPrice).toFixed(0)}
+                    {orderData?.deliveryFee ? ` + ₹${Number(orderData?.deliveryFee).toFixed(0)} (Delivery)` : ''}
+                  </span>
                 </div>
               )}
 
               {/* Commission Amount */}
-              {(Number(orderData?.dealId?.finalCashBackForUser) > Number(dealData?.parentDealId?.actualPrice || dealData?.actualPrice)) && (
+              {orderData?.isCommissionDeal && (
                 <div className="flex justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Commission Amount</span>
-                  <span className="font-medium text-green-500">₹{Number(Number(orderData?.dealId?.finalCashBackForUser) - Number(dealData?.parentDealId?.actualPrice || dealData?.actualPrice)).toFixed(0)}</span>
+                  <span className="font-medium text-green-500">₹{(Number(orderData?.commissionValue || 0) - Number(orderData?.adminCommission || 0)).toFixed(0)}</span>
                 </div>
               )}
 
               {/* Return Amount */}
-              {orderData?.orderPrice && orderData?.lessAmount && (
-                <div className="flex justify-between py-2 border-b border-gray-100">
-                  <span className="text-gray-600">Return Amount</span>
-                  <span className="font-medium text-green-500">₹{Number(orderData?.orderPrice - orderData?.lessAmount).toFixed(0)}</span>
-                </div>
-              )}
+              <div className="flex justify-between py-2 border-b border-gray-100">
+                <span className="text-gray-600">Return Amount</span>
+                <span className="font-medium text-green-500">
+                  ₹{orderData?.isCommissionDeal 
+                    ? Number(Number(orderData?.orderPrice) + Number(orderData?.commissionValue) + Number(orderData?.deliveryFee || 0) - Number(orderData?.adminCommission || 0)).toFixed(0)
+                    : Number(Number(orderData?.orderPrice) - Number(orderData?.lessAmount) + Number(orderData?.deliveryFee || 0) - Number(orderData?.adminCommission || 0)).toFixed(0)
+                  }
+                </span>
+              </div>
 
               {/* Exchange Product */}
               {orderData?.exchangeDealProducts && orderData?.exchangeDealProducts?.length > 0 && (

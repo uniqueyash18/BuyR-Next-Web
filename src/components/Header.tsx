@@ -26,7 +26,7 @@ const Header = () => {
   const tabs = [
     { name: "HOME", path: "/home", icon: "/images/home.svg" },
     { name: "FORMS", path: "/orderForm", icon: "/images/form.svg" },
-    { name: "MY DEAL ORDERS", path: "/orders", icon: "/images/order.svg" },
+    { name: "MY ORDERS", path: "/orders", icon: "/images/order.svg" },
     { name: "REFER", path: "/refer", icon: "/images/refer.svg" },
     { name: "ACCOUNT", path: "/account", icon: "/images/account.svg" },
   ];

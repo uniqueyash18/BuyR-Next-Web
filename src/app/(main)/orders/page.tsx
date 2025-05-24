@@ -44,6 +44,10 @@ interface Order {
   productName?: string;
   orderPrice?: number;
   lessAmount?: number;
+  isCommissionDeal?: boolean;
+  commissionValue?: number;
+  deliveryFee?: number;
+  adminCommission?: number;
 }
 
 // Define filter types
@@ -275,10 +279,10 @@ export default function OrdersPage() {
 
                       <div className="flex flex-col md:flex-row justify-between mb-2">
                         <div className="text-gray-600">
-                          Price: ₹{order?.orderPrice|| order.dealId?.parentDealId?.actualPrice || order.dealId?.actualPrice}
+                          Price: ₹{Number(order?.orderPrice) + Number(order?.deliveryFee || 0) || 0}
                         </div>
                         <div className="text-gray-600">
-                          Refund: ₹{ order?.orderPrice && order?.lessAmount ? Number(order?.orderPrice) - Number(order?.lessAmount) :  order.dealId?.finalCashBackForUser}
+                          Refund: ₹{ order?.isCommissionDeal ? Number(order?.orderPrice) +  Number(order?.commissionValue) + Number(order?.deliveryFee || 0) - Number(order?.adminCommission || 0) : Number(order?.orderPrice) - Number(order?.lessAmount) + Number(order?.deliveryFee || 0) - Number(order?.adminCommission || 0)}
                         </div>
                       </div>
 

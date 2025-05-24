@@ -318,7 +318,7 @@ export default function OrderFormPage() {
     updateState({ isLoading: true });
     const dealDetails = values?.productName.map((item: any) => ({
       dealId: item?.id,
-      price: item?.customPrice || item?.price,
+      amount: parseFloat(item?.customPrice || item?.price) || 0
     }));
 
     createOrder({
