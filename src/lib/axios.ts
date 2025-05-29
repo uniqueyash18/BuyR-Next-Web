@@ -32,7 +32,6 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Handle unauthorized access
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('userData');
         window.location.href = '/auth/login';
       }
     }
