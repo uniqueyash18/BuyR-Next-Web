@@ -31,8 +31,10 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Handle unauthorized access
-      // localStorage.removeItem('token');
-      // window.location.href = '/auth/login';
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('userData');
+        window.location.href = '/auth/login';
+      }
     }
     return Promise.reject(error);
   }

@@ -1,6 +1,5 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import axiosInstance from '@/lib/axios';
-import { useRouter } from 'next/navigation';
 
 interface PaginationParams {
   page?: number;
@@ -31,31 +30,22 @@ export function usePaginatedQuery<T>(
   params: PaginationParams = { page: 1, limit: 10 },
   options?: Omit<UseQueryOptions<ApiResponse<T>, Error>, 'queryKey' | 'queryFn'>
 ) {
-  const router = useRouter();
-
   return useQuery({
     queryKey: [...queryKey, params],
     queryFn: async () => {
-      try {
-        const { data } = await axiosInstance.get<ApiResponse<T>>(endpoint, {
-          params: {
-            page: params.page || 1,
-            limit: params.limit || 10,
-            ...params,
-          },
-        });
-        
-        if (!data.success) {
-          throw new Error(data.message || 'Failed to fetch data');
-        }
-        
-        return data;
-      } catch (error: any) {
-        if (error?.response?.status === 401 && typeof window !== 'undefined') {
-          router.push('/auth/login');
-        }
-        throw error;
+      const { data } = await axiosInstance.get<ApiResponse<T>>(endpoint, {
+        params: {
+          page: params.page || 1,
+          limit: params.limit || 10,
+          ...params,
+        },
+      });
+      
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to fetch data');
       }
+      
+      return data;
     },
     ...options,
   });
@@ -68,20 +58,11 @@ export function useGenericQuery<T>(
   params: Record<string, any> = {},
   options?: Omit<UseQueryOptions<T, Error>, 'queryKey' | 'queryFn'>
 ) {
-  const router = useRouter();
-
   return useQuery({
     queryKey: [...queryKey, params],
     queryFn: async () => {
-      try {
-        const { data } = await axiosInstance.get<T>(endpoint, { params });
-        return data;
-      } catch (error: any) {
-        if (error?.response?.status === 401 && typeof window !== 'undefined') {
-          router.push('/auth/login');
-        }
-        throw error;
-      }
+      const { data } = await axiosInstance.get<T>(endpoint, { params });
+      return data;
     },
     ...options,
   });
