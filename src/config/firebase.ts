@@ -9,7 +9,7 @@ const firebaseConfig = {
   messagingSenderId: "445125567251",
   appId: "1:445125567251:web:62102c6b8fce6ea3bb70e6",
   measurementId: "G-ZMNN74WPC7"
-};
+}; 
 
 // Initialize Firebase only if it hasn't been initialized already
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
