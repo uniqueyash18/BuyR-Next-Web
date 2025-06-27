@@ -48,7 +48,7 @@ export default function BrandCard({ item, index }: BrandCardProps) {
           </div>
         ) : (
           <Image
-            src={item.image}
+            src={item?.image}
             alt={item?.name || "Brand"}
             fill
             className="object-contain p-4"
@@ -56,7 +56,7 @@ export default function BrandCard({ item, index }: BrandCardProps) {
         )}
       </div>
       <div className="p-3">
-        <h3 className="text-lg font-bold text-black">{item.name}</h3>
+        <h3 className="text-lg font-bold text-black">{item?.name}</h3>
       </div>
     </motion.div>
   );

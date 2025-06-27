@@ -30,6 +30,12 @@ interface Transaction {
     finalCashBackForUser: number;
   };
   paymentStatus: string;
+  isCommissionDeal: boolean;
+  orderPrice: number;
+  commissionValue: number;
+  deliveryFee: number;
+  adminCommission: number;
+  lessAmount: number;
 }
 
 interface OrderListResponse {
@@ -61,7 +67,7 @@ export default function TransactionsPage() {
 
   useEffect(() => {
     fetchOrders({
-      offset: Number(currentPage+1) * 10,
+      offset: Number(currentPage) * 10,
       limit: 10,
     });
   }, [currentPage, fetchOrders]);

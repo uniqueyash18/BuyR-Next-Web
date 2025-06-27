@@ -10,6 +10,12 @@ export interface Field {
   minDate?: Date;
   disabled?: boolean;
   placeholder?: string;
+  customFields?: {
+    name: string;
+    label: string;
+    type: 'text' | 'numeric';
+    placeholder: string;
+  }[];
 }
 
 export interface CustomFormProps {
