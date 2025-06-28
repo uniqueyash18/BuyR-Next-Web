@@ -364,7 +364,7 @@ export default function OrderDetailPage({ params }: any) {
               {!orderData?.isCommissionDeal && (
                 <div className="flex justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Less Amount</span>
-                  <span className="font-medium text-green-500">₹{(Number(orderData?.lessAmount || 0) - Number(orderData?.adminCommission || 0)).toFixed(0)}</span>
+                  <span className="font-medium text-green-500">₹{(Number(orderData?.lessAmount || 0) + Number(orderData?.adminCommission || 0)).toFixed(0)}</span>
                 </div>
               )}
 
