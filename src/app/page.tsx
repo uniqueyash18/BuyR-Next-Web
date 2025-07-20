@@ -8,6 +8,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+interface SellerData {
+  seller_id: string;
+  seller_name: string;
+  rating: string;
+  number_of_ratings: string;
+  star_distribution: {
+    "1_star": string;
+    "2_star": string;
+    "3_star": string;
+    "4_star": string;
+    "5_star": string;
+  };
+}
+
 export default function HomePage() {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -21,6 +35,9 @@ export default function HomePage() {
   const [targetRating, setTargetRating] = useState(4.5);
   const [additionalFiveStars, setAdditionalFiveStars] = useState(0);
   const [showCalculator, setShowCalculator] = useState(false);
+  const [sellerData, setSellerData] = useState<SellerData | null>(null);
+  const [isLoadingSeller, setIsLoadingSeller] = useState(false);
+  const [sellerId, setSellerId] = useState("A15APWRK6P7LBV");
   
   const isAuthenticated = useSelector(
     (state: RootState) =>
@@ -56,6 +73,45 @@ export default function HomePage() {
     
     const required = Math.ceil((targetRating * totalRatings - currentWeightedSum) / (5 - targetRating));
     return Math.max(0, required);
+  };
+
+  // Fetch seller data from API
+  const fetchSellerData = async () => {
+    if (!sellerId.trim()) {
+      alert("Please enter a seller ID");
+      return;
+    }
+
+    setIsLoadingSeller(true);
+    try {
+      const response = await fetch(`https://buyrapp.in/api/scrape/${sellerId.trim()}`);
+      const result = await response.json();
+      
+      if (result.success && result.data) {
+        setSellerData(result.data);
+        
+        // Convert percentage distribution to actual numbers
+        const totalRatings = parseInt(result.data.number_of_ratings.replace(/,/g, ''));
+        const distribution = result.data.star_distribution;
+        
+        const newRatings = {
+          fiveStar: Math.round((parseInt(distribution["5_star"]) / 100) * totalRatings),
+          fourStar: Math.round((parseInt(distribution["4_star"]) / 100) * totalRatings),
+          threeStar: Math.round((parseInt(distribution["3_star"]) / 100) * totalRatings),
+          twoStar: Math.round((parseInt(distribution["2_star"]) / 100) * totalRatings),
+          oneStar: Math.round((parseInt(distribution["1_star"]) / 100) * totalRatings),
+        };
+        
+        setRatings(newRatings);
+      } else {
+        alert("Failed to fetch seller data. Please check the seller ID.");
+      }
+    } catch (error) {
+      console.error("Error fetching seller data:", error);
+      alert("Error fetching seller data. Please try again.");
+    } finally {
+      setIsLoadingSeller(false);
+    }
   };
 
   const currentRating = calculateCurrentRating();
@@ -366,6 +422,100 @@ export default function HomePage() {
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Calculate your current average rating and find out how many 5-star reviews you need to reach your target rating.
             </p>
+          </motion.div>
+
+          {/* Seller Data Extraction */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            viewport={{ once: true }}
+            className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 shadow-lg border border-green-100 mb-8"
+          >
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Extract Seller Data</h3>
+            <div className="flex flex-col sm:flex-row gap-4 items-end">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Seller ID (Amazon)
+                </label>
+                <input
+                  type="text"
+                  value={sellerId}
+                  onChange={(e) => setSellerId(e.target.value)}
+                  placeholder="e.g., A15APWRK6P7LBV"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={fetchSellerData}
+                disabled={isLoadingSeller}
+                className="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {isLoadingSeller ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Loading...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    Extract Data
+                  </>
+                )}
+              </motion.button>
+            </div>
+
+            {/* Display Seller Data */}
+            {sellerData && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-6 bg-white rounded-xl p-4 shadow-md"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-semibold text-gray-800 mb-2">{sellerData.seller_name}</h4>
+                    <p className="text-sm text-gray-600">ID: {sellerData.seller_id}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-lg font-bold text-gray-800">{sellerData.rating}</span>
+                      <div className="flex">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <svg
+                            key={star}
+                            className={`w-4 h-4 ${
+                              star <= Math.round(parseFloat(sellerData.rating))
+                                ? 'text-yellow-400 fill-current'
+                                : 'text-gray-300'
+                            }`}
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-1">{sellerData.number_of_ratings} total ratings</p>
+                  </div>
+                  <div>
+                    <h5 className="font-medium text-gray-800 mb-2">Star Distribution</h5>
+                    <div className="space-y-1">
+                      {Object.entries(sellerData.star_distribution).map(([star, percentage]) => (
+                        <div key={star} className="flex items-center justify-between text-sm">
+                          <span className="text-gray-600">
+                            {star.replace('_', ' ').replace('star', '★')}
+                          </span>
+                          <span className="font-medium text-gray-800">{percentage}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </motion.div>
 
           <motion.div
